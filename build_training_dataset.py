@@ -7,7 +7,7 @@ import argparse
 from cloudgaming.data_processors.Dataset import build_training_datasets
 
 parser = argparse.ArgumentParser(description="Create training datasets")
-parser.add_argument("-n", "--n_highest", type=int)
+parser.add_argument("-n", "--n_highest", type=int, help="Select n most played games")
 args = parser.parse_args()
 
 

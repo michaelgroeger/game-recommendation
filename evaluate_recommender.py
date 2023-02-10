@@ -17,10 +17,10 @@ parser.add_argument(
     "--model_path",
     type=str,
     default=None,
-    description="Path to trained model you want to evaluate",
+    help="Path to trained model you want to evaluate",
 )
 parser.add_argument(
-    "-s", "--seed", type=int, default=41, description="Seed for sampling operations"
+    "-s", "--seed", type=int, default=41, help="Seed for sampling operations"
 )
 # Occlusion means how many % of the games we try to reconstruct
 parser.add_argument(
@@ -28,38 +28,38 @@ parser.add_argument(
     "--occlusion",
     type=float,
     default=0.3,
-    description="Level of occlusion of the test user",
+    help="Level of occlusion of the test user",
 )
 parser.add_argument(
     "-mg",
     "--min_games",
     type=int,
     default=20,
-    description="Minimum amount of games a user need to have to be considered",
+    help="Minimum amount of games a user need to have to be considered",
 )
 parser.add_argument(
-    "-nu", "--n_test_users", type=int, default=20, description="Amount of test users"
+    "-nu", "--n_test_users", type=int, default=20, help="Amount of test users"
 )
 parser.add_argument(
     "-ncu",
     "--n_closest_users",
     type=int,
     default=13,
-    description="For the deep and naive recommender ranking stage, how many users should be used to built the mean embedding",
+    help="For the deep and naive recommender ranking stage, how many users should be used to built the mean embedding",
 )
 parser.add_argument(
     "-ncand",
     "--n_candidate_games",
     type=int,
     default=120,
-    description="For the deep recommender retrival stage - How many candidate games to retrieve",
+    help="For the deep recommender retrival stage - How many candidate games to retrieve",
 )
 parser.add_argument(
     "-mp",
     "--min_playtime",
     type=float,
     default=5.0,
-    description="Minimum playtime for a game to be considered",
+    help="Minimum playtime for a game to be considered",
 )
 args = parser.parse_args()
 

@@ -1,0 +1,1 @@
+python evaluate_recommender.py -mpath ./scripts/app/files/models/CollabNN/07_02_2023_13_54-collabnn-I7ULX-bcp=True-with_reference_dset-n_games=5000-n_users=11727-val_loss=0.3595-best_hit_rate=0.3200-diversity=0.1730-lr=0.0001-momentum=0.0-wd=0.0-top_k_users=5-min_games=20-min_playtimes=5.0-n_negative_samples=4.pt
