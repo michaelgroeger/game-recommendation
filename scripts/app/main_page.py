@@ -1,0 +1,96 @@
+#######################################################################################################################################
+# First page of the App, here we define the naming of the pages and load the data which will be accessible during the app interaction #
+#######################################################################################################################################
+import os
+
+import numpy as np
+import pandas as pd
+import randfacts
+import streamlit as st
+import torch
+from models.collaborative_filtering_recommender import CollabNNInference
+from st_pages import Page, show_pages
+
+# Set name of current page
+st.set_page_config(
+    page_title="Preparation",
+)
+# Specify what pages should be shown in the sidebar, and what their titles
+# and icons should be
+show_pages(
+    [
+        Page("main_page.py", "Preparation"),
+        Page("pages/page_2.py", "Welcome"),
+        Page("pages/page_3.py", "Recommendations"),
+        Page("pages/page_4.py", "Embedding Explorer"),
+    ]
+)
+# Display title in app
+st.title(
+    "Welcome to the awesome gaming recommendation app, we are setting everything up for your visit"
+)
+# Text under title
+st.markdown(
+    "In the meanwhile learn something new with some random facts. Did you know that: "
+)
+# Instatiate the place to display the facts
+facts = st.empty()
+## Loading data
+# Set base path to make it work across different systems
+base_path = os.getcwd()
+# load game containing all the side information
+game_informations = pd.read_parquet(
+    os.path.join(
+        base_path,
+        "files/data/subset_game_information_5000_most_played_games_prompts=False.parq",
+    )
+)
+# Load original user game matrix for naive recommender
+user_game_matrix = pd.read_parquet(
+    os.path.join(
+        base_path, "files/data/subset_user_game_matrix_5000_most_played_games.parq"
+    )
+)
+# Load content-based game embeddings for content based recommender
+game_embeddings = np.load(
+    os.path.join(
+        base_path,
+        "files/data/game_embeddings_5000_most_played_games_prompts=False.npy",
+    )
+)
+# Get all genres for the app
+genres = game_informations["single_genre"].unique().tolist()
+# Get all game names for the app
+games = game_informations["name"].tolist()
+# Display sucess message
+st.success("Database is ready", icon="✅")
+# Display a random fact to ease waiting time for user
+facts.write(randfacts.get_fact())
+# load the model for the deep recommender
+trained_model = torch.load(
+    os.path.join(
+        base_path,
+        "files/models/CollabNN/07_02_2023_13_54-collabnn-I7ULX-bcp=True-with_reference_dset-n_games=5000-n_users=11727-val_loss=0.3595-best_hit_rate=0.3200-diversity=0.1730-lr=0.0001-momentum=0.0-wd=0.0-top_k_users=5-min_games=20-min_playtimes=5.0-n_negative_samples=4.pt",
+    ),
+    map_location=torch.device("cpu"),
+)
+model = CollabNNInference(
+    trained_model.user_factors,
+    trained_model.game_factors,
+    trained_model.idx_to_app_id,
+    trained_model.app_id_to_idx,
+    trained_model.reference_dataset,
+    binary_classification=True,
+)
+
+# Display sucess message
+st.success("Models are ready to help you finding your next game", icon="✅")
+
+# Cache data and objects so they are available across pages
+st.session_state["model"] = model
+st.session_state["game_informations"] = game_informations
+st.session_state["game_embeddings"] = game_embeddings
+st.session_state["user_game_matrix"] = user_game_matrix
+st.session_state["genres"] = genres
+st.session_state["games"] = games
+st.success("We are ready to go, please proceed to the Welcome page", icon="🎉")
