@@ -1,6 +1,7 @@
 # data-science-project
 
 ## Getting started
+
 To have the easiest setup experience make sure the following bash scripts are executable:
 
 ```zsh
