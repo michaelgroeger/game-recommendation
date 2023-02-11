@@ -42,20 +42,20 @@ base_path = os.getcwd()
 game_informations = pd.read_parquet(
     os.path.join(
         base_path,
-        "app/files/data/subset_game_information_5000_most_played_games_prompts=False.parq",
+        "files/data/subset_game_information_5000_most_played_games_prompts=False.parq",
     )
 )
 # Load original user game matrix for naive recommender
 user_game_matrix = pd.read_parquet(
     os.path.join(
-        base_path, "app/files/data/subset_user_game_matrix_5000_most_played_games.parq"
+        base_path, "files/data/subset_user_game_matrix_5000_most_played_games.parq"
     )
 )
 # Load content-based game embeddings for content based recommender
 game_embeddings = np.load(
     os.path.join(
         base_path,
-        "app/files/data/game_embeddings_5000_most_played_games_prompts=False.npy",
+        "files/data/game_embeddings_5000_most_played_games_prompts=False.npy",
     )
 )
 # Get all genres for the app
@@ -70,7 +70,7 @@ facts.write(randfacts.get_fact())
 trained_model = torch.load(
     os.path.join(
         base_path,
-        "app/files/models/CollabNN/07_02_2023_13_54-collabnn-I7ULX-bcp=True-with_reference_dset-n_games=5000-n_users=11727-val_loss=0.3595-best_hit_rate=0.3200-diversity=0.1730-lr=0.0001-momentum=0.0-wd=0.0-top_k_users=5-min_games=20-min_playtimes=5.0-n_negative_samples=4.pt",
+        "files/models/CollabNN/07_02_2023_13_54-collabnn-I7ULX-bcp=True-n_games=5000-n_users=11727-val_loss=0.3595-best_hit_rate=0.3200-diversity=0.1730-lr=0.0001-momentum=0.0-wd=0.0-top_k_users=5-min_games=20-min_playtimes=5.0-n_negative_samples=4.pt",
     ),
     map_location=torch.device("cpu"),
 )

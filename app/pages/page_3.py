@@ -92,7 +92,7 @@ if show_deep:
         use_content_embeddings=False,
         already_have_ids=already_have_ids,
         user=None,
-        reference_dataset=model.reference_dataset,
+        reference_dataset=user_game_matrix,
         n_candidates=120,
         top_k_users=13,
         num_recommendations=n,
