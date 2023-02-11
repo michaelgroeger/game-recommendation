@@ -42,7 +42,7 @@ if selected_recommenders == "Content-Based":
         df = pd.read_parquet(
             os.path.join(
                 base_path,
-                "files/data/pca_content_embeddings_5000_games.parq",
+                "app/files/data/pca_content_embeddings_5000_games.parq",
             )
         )
         # Label the axis
@@ -54,7 +54,7 @@ if selected_recommenders == "Content-Based":
         df = pd.read_parquet(
             os.path.join(
                 base_path,
-                "files/data/tsne_content_embeddings_5000_games.parq",
+                "app/files/data/tsne_content_embeddings_5000_games.parq",
             )
         )
         # Label the axis
@@ -68,7 +68,7 @@ if selected_recommenders == "Deep Learning Based":
         df = pd.read_parquet(
             os.path.join(
                 base_path,
-                "files/data/PCA_model_embeddings_5000_games.parq",
+                "app/files/data/PCA_model_embeddings_5000_games.parq",
             )
         )
         # Label the axis
@@ -80,7 +80,7 @@ if selected_recommenders == "Deep Learning Based":
         df = pd.read_parquet(
             os.path.join(
                 base_path,
-                "files/data/tsne_model_embeddings_5000_games.parq",
+                "app/files/data/tsne_model_embeddings_5000_games.parq",
             )
         )
         # Label the axis

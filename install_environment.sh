@@ -17,23 +17,23 @@ else
   exit 1
 
 fi
-echo "Installing conda-build..."
-conda install conda-build
-if [ $? -eq 0 ]; then
-  echo "Conda-build installation succeeded."
-else
-  echo "Conda-build installation failed."
-  exit 1
-fi
+# echo "Installing conda-build..."
+# conda install conda-build
+# if [ $? -eq 0 ]; then
+#   echo "Conda-build installation succeeded."
+# else
+#   echo "Conda-build installation failed."
+#   exit 1
+# fi
 
-echo "Developing the scripts directory..."
-conda develop ./scripts
-if [ $? -eq 0 ]; then
-  echo "Developing the scripts directory succeeded."
-else
-  echo "Developing the scripts directory failed."
-  exit 1
-fi
+# echo "Developing the scripts directory..."
+# conda develop ./scripts
+# if [ $? -eq 0 ]; then
+#   echo "Developing the scripts directory succeeded."
+# else
+#   echo "Developing the scripts directory failed."
+#   exit 1
+# fi
 
 echo "Installing the requirements..."
 pip install -r requirements.txt
