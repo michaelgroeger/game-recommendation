@@ -12,6 +12,7 @@ import torch
 torch.autograd.set_detect_anomaly(True)
 import random
 
+import wandb
 from data_processors.Dataset import (
     CollaborativeFilteringDataWorker,
     HitRatioDataset,
@@ -21,8 +22,6 @@ from models.collaborative_filtering_recommender import CollabNN, DotProductBias
 from tools.train import get_train_test_val_of_dataframe, train_test_validate
 from tools.useful_functions import sample_users_having_at_least_n_games
 from torch.utils.data import DataLoader
-
-import wandb
 
 parser = argparse.ArgumentParser(description="Evaluate and train algorithms")
 parser.add_argument("-m", "--model", type=str, default="CollabNN")

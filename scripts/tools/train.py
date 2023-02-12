@@ -10,13 +10,12 @@ import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import wandb
 from data_processors.Dataset import HitRatioDataset
 from tools.evaluation_cold_start import evaluate_recommender
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-
-import wandb
 
 
 def get_hit_rate(dataset, model, top_k):
