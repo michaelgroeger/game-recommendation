@@ -115,8 +115,6 @@ fig = px.scatter_3d(
     hover_name="names",
     color_discrete_sequence=df["color"],
 )
-# allow_markings  = st.sidebar.button("Find game in embedding view")
-# if allow_markings == True:
 mark_game = st.sidebar.selectbox(
     "Select a game you would like to annotate",
     df["names"],
@@ -126,11 +124,6 @@ game = df[df["names"] == mark_game]
 # Improve marker size
 fig.update_traces(marker_size=2.5)
 # Overwrite title and axis
-# if allow_markings == False:
-#     fig.update_layout(
-#         scene=dict(xaxis_title=x_label, yaxis_title=y_label, zaxis_title=z_label),
-#     )
-# else:
 game = df[df["names"] == mark_game]
 fig.update_layout(
     scene=dict(
