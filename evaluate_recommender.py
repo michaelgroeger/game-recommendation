@@ -82,6 +82,12 @@ game_embeddings = np.load(
         "data/training_dataset/game_embeddings_5000_most_played_games_prompts=False.npy",
     )
 )
+game_embeddings_prompts = np.load(
+    os.path.join(
+        os.getcwd(),
+        "data/training_dataset/game_embeddings_5000_most_played_games_prompts=True.npy",
+    )
+)
 # Drop zero rows
 mask = (user_game_matrix == 0.0).all(axis=1)
 user_game_matrix = user_game_matrix[~mask]
@@ -91,6 +97,7 @@ def main(
     user_game_matrix=user_game_matrix,
     game_information=game_information,
     game_embeddings=game_embeddings,
+    game_embeddings_prompts=game_embeddings_prompts,
 ):
     # Subset into acitve users according to criteria
     active_users = sample_users_having_at_least_n_games(
@@ -166,6 +173,15 @@ def main(
         game_information=game_information,
         occlusion=args.occlusion,
         game_embeddings=game_embeddings,
+        seed=args.seed,
+    )
+    evaluate_recommender(
+        recommendation_engine="Content",
+        test_users=test_users,
+        non_test_users=non_test_users,
+        game_information=game_information,
+        occlusion=args.occlusion,
+        game_embeddings=game_embeddings_prompts,
         seed=args.seed,
     )
 

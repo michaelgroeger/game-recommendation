@@ -1,21 +1,39 @@
 ######################################################################################################
 # Second page of the App, here the user can import their steam profile or manually select some games #
 ######################################################################################################
+import warnings
+warnings.filterwarnings("ignore", message="`st.experimental_singleton` is deprecated. Please use the new command `st.cache_resource` instead, which has the same behavior. More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).")
 import streamlit as st
 from tools.useful_functions import get_user_games
+import os
+from streamlit_helpers.load_data import load_dataframe, load_numpy
+from streamlit_helpers.load_elements import load_elements_to_list, build_user_vector
 
-# Set page title
-st.set_page_config(
-    page_title="Welcome",
+base_path = os.getcwd()
+# load game containing all the side information
+game_informations = load_dataframe(path=os.path.join(
+        base_path,
+        "files/data/subset_game_information_5000_most_played_games_prompts=False.parq",
+    )
 )
-
-# Instantiate lists to collect user data
+# Load original user game matrix for naive recommender
+user_game_matrix = load_dataframe(path=os.path.join(
+        base_path, "files/data/subset_user_game_matrix_5000_most_played_games.parq"
+    )
+)
+# Load content-based game embeddings for content based recommender
+game_embeddings = load_numpy(path=os.path.join(
+        base_path,
+        "files/data/game_embeddings_5000_most_played_games_prompts=False.npy",
+    )
+)
+# Get all genres for the app
+genres = load_elements_to_list(game_informations["single_genre"], unique=True)
+# Get all game names for the app
+games = load_elements_to_list(game_informations["name"], unique=False)
 already_have = []
 favourite_genres = []
-# Call cached data such that they are available during this page
-genres = st.session_state["genres"]
-games = st.session_state["games"]
-user_game_matrix = st.session_state["user_game_matrix"]
+user = []
 
 # Display title
 st.title("Tell us which games you already have")
@@ -51,9 +69,11 @@ elif choice == "Import from Steam":
             only_played=True,
             must_be_present_in_dataset=True,
         )
+        user = build_user_vector(user_game_matrix, already_have_ids=app_ids, playtimes=playtimes_user)
         if len(already_have) > 0:
             st.success("Steam games imported", icon="✅")
 
 # Add generated user info to cached data
 st.session_state["already_have"] = already_have
 st.session_state["favourite_genres"] = favourite_genres
+st.session_state["user"] = user

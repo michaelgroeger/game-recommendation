@@ -1,2 +1,2 @@
-cd app
-streamlit run ./main_page.py --server.headless true
+ cd scripts/app
+ streamlit run Preparation.py --server.headless true
