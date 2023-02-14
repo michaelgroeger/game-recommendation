@@ -3,14 +3,18 @@
 #######################################################################################################################################
 import os
 import warnings
-warnings.filterwarnings("ignore", message="`st.experimental_singleton` is deprecated. Please use the new command `st.cache_resource` instead, which has the same behavior. More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).")
+
+warnings.filterwarnings(
+    "ignore",
+    message="`st.experimental_singleton` is deprecated. Please use the new command `st.cache_resource` instead, which has the same behavior. More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).",
+)
 
 import randfacts
 import streamlit as st
-from streamlit_helpers.load_data import load_dataframe, load_model, load_numpy
-from streamlit_helpers.load_elements import load_elements_to_list
 from models.collaborative_filtering_recommender import CollabNNInference
 from st_pages import Page, show_pages
+from streamlit_helpers.load_data import load_dataframe, load_model, load_numpy
+from streamlit_helpers.load_elements import load_elements_to_list
 
 # Set name of current page
 # st.set_page_config(
@@ -40,18 +44,21 @@ facts = st.empty()
 # Set base path to make it work across different systems
 base_path = os.getcwd()
 # load game containing all the side information
-game_informations = load_dataframe(path=os.path.join(
+game_informations = load_dataframe(
+    path=os.path.join(
         base_path,
         "files/data/subset_game_information_5000_most_played_games_prompts=False.parq",
     )
 )
 # Load original user game matrix for naive recommender
-user_game_matrix = load_dataframe(path=os.path.join(
+user_game_matrix = load_dataframe(
+    path=os.path.join(
         base_path, "files/data/subset_user_game_matrix_5000_most_played_games.parq"
     )
 )
 # Load content-based game embeddings for content based recommender
-game_embeddings = load_numpy(path=os.path.join(
+game_embeddings = load_numpy(
+    path=os.path.join(
         base_path,
         "files/data/game_embeddings_5000_most_played_games_prompts=False.npy",
     )
@@ -65,7 +72,8 @@ st.success("Database is ready", icon="✅")
 # Display a random fact to ease waiting time for user
 facts.write(randfacts.get_fact())
 # load the model for the deep recommender
-trained_model = load_model(path=os.path.join(
+trained_model = load_model(
+    path=os.path.join(
         base_path,
         "files/models/CollabNN/07_02_2023_13_54-collabnn-I7ULX-bcp=True-n_games=5000-n_users=11727-val_loss=0.3595-best_hit_rate=0.3200-diversity=0.1730-lr=0.0001-momentum=0.0-wd=0.0-top_k_users=5-min_games=20-min_playtimes=5.0-n_negative_samples=4.pt",
     )

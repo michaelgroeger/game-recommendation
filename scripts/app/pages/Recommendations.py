@@ -2,32 +2,40 @@
 # Third page of the App, here we make recommendations based on the user inputs #
 ################################################################################
 import warnings
-warnings.filterwarnings("ignore", message="`st.experimental_singleton` is deprecated. Please use the new command `st.cache_resource` instead, which has the same behavior. More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).")
+
+warnings.filterwarnings(
+    "ignore",
+    message="`st.experimental_singleton` is deprecated. Please use the new command `st.cache_resource` instead, which has the same behavior. More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).",
+)
+import os
+
 import streamlit as st
+from models.collaborative_filtering_recommender import CollabNNInference
+from streamlit_helpers.load_data import load_dataframe, load_model, load_numpy
+from streamlit_helpers.load_elements import load_elements_to_list
 from tools.inference import (
     content_based_recommender,
     make_recommendations_deep_collaborative_filtering,
     naive_recommender_binary_input,
 )
-from streamlit_helpers.load_data import load_dataframe, load_numpy, load_model
-from streamlit_helpers.load_elements import load_elements_to_list
-from models.collaborative_filtering_recommender import CollabNNInference
 
-import os
 base_path = os.getcwd()
 # load game containing all the side information
-game_informations = load_dataframe(path=os.path.join(
+game_informations = load_dataframe(
+    path=os.path.join(
         base_path,
         "files/data/subset_game_information_5000_most_played_games_prompts=False.parq",
     )
 )
 # Load original user game matrix for naive recommender
-user_game_matrix = load_dataframe(path=os.path.join(
+user_game_matrix = load_dataframe(
+    path=os.path.join(
         base_path, "files/data/subset_user_game_matrix_5000_most_played_games.parq"
     )
 )
 # Load content-based game embeddings for content based recommender
-game_embeddings = load_numpy(path=os.path.join(
+game_embeddings = load_numpy(
+    path=os.path.join(
         base_path,
         "files/data/game_embeddings_5000_most_played_games_prompts=False.npy",
     )
@@ -36,7 +44,8 @@ game_embeddings = load_numpy(path=os.path.join(
 genres = load_elements_to_list(game_informations["single_genre"], unique=True)
 # Get all game names for the app
 games = load_elements_to_list(game_informations["name"], unique=False)
-trained_model = load_model(path=os.path.join(
+trained_model = load_model(
+    path=os.path.join(
         base_path,
         "files/models/CollabNN/07_02_2023_13_54-collabnn-I7ULX-bcp=True-n_games=5000-n_users=11727-val_loss=0.3595-best_hit_rate=0.3200-diversity=0.1730-lr=0.0001-momentum=0.0-wd=0.0-top_k_users=5-min_games=20-min_playtimes=5.0-n_negative_samples=4.pt",
     )
@@ -52,12 +61,12 @@ model = CollabNNInference(
 
 # Call cached data such that they are available during this page
 # Initialization already_have
-if 'already_have' not in st.session_state:
+if "already_have" not in st.session_state:
     already_have = []
 else:
     already_have = st.session_state["already_have"]
 # Initialization
-if 'favourite_genres' not in st.session_state:
+if "favourite_genres" not in st.session_state:
     already_have = []
 else:
     favourite_genres = st.session_state["favourite_genres"]
@@ -93,13 +102,13 @@ if show_content_based:
             num_recommendations=n,
         )
         # Get images of recommmendations
-        images = game_informations.loc[game_informations["appid"].isin(recommendations)][
-            "header_image"
-        ].tolist()
+        images = game_informations.loc[
+            game_informations["appid"].isin(recommendations)
+        ]["header_image"].tolist()
         # Get original app id to be 100 % sure it works in the link to the store page
-        app_ids = game_informations.loc[game_informations["appid"].isin(recommendations)][
-            "appid"
-        ].tolist()
+        app_ids = game_informations.loc[
+            game_informations["appid"].isin(recommendations)
+        ]["appid"].tolist()
         # Clean dublicates to catch bug that shows the same id twice
         app_ids = list(set(app_ids))
         # Display images and open store page when user clicks on link
@@ -108,7 +117,9 @@ if show_content_based:
                 f"[![Recommendation]({images[i].format(i + 1)})](https://store.steampowered.com/app/{app_ids[i]}/)"
             )
     else:
-        st.write("Did not receive any owned games. Please go back to the Welcome page and follow the instructions.")
+        st.write(
+            "Did not receive any owned games. Please go back to the Welcome page and follow the instructions."
+        )
 # Select box 2
 show_collaborative_filtering = st.checkbox("Collaborative Filtering Recommender")
 if show_collaborative_filtering:
@@ -121,18 +132,20 @@ if show_collaborative_filtering:
             top_k_users=5,
         )
         # Get images of recommmendations
-        images = game_informations.loc[game_informations["appid"].isin(recommendations)][
-            "header_image"
-        ].tolist()
-        app_ids = game_informations.loc[game_informations["appid"].isin(recommendations)][
-            "appid"
-        ].tolist()
+        images = game_informations.loc[
+            game_informations["appid"].isin(recommendations)
+        ]["header_image"].tolist()
+        app_ids = game_informations.loc[
+            game_informations["appid"].isin(recommendations)
+        ]["appid"].tolist()
         for i in range(n):
             st.markdown(
                 f"[![Recommendation]({images[i].format(i + 1)})](https://store.steampowered.com/app/{app_ids[i]}/)"
             )
     else:
-        st.write("Did not receive any owned games. Please go back to the Welcome page and follow the instructions.")
+        st.write(
+            "Did not receive any owned games. Please go back to the Welcome page and follow the instructions."
+        )
 # Select box 3
 show_deep = st.checkbox("Deep Recommender")
 if show_deep:
@@ -152,15 +165,17 @@ if show_deep:
         )
         # Convert from indices to original app ids
         recommendations = [model.idx_to_app_id[i.item()] for i in recommendations]
-        images = game_informations.loc[game_informations["appid"].isin(recommendations)][
-            "header_image"
-        ].tolist()
-        app_ids = game_informations.loc[game_informations["appid"].isin(recommendations)][
-            "appid"
-        ].tolist()
+        images = game_informations.loc[
+            game_informations["appid"].isin(recommendations)
+        ]["header_image"].tolist()
+        app_ids = game_informations.loc[
+            game_informations["appid"].isin(recommendations)
+        ]["appid"].tolist()
         for i in range(n):
             st.markdown(
                 f"[![Recommendation]({images[i].format(i + 1)})](https://store.steampowered.com/app/{app_ids[i]}/)"
             )
     else:
-        st.write("Did not receive any owned games. Please go back to the Welcome page and follow the instructions.")
+        st.write(
+            "Did not receive any owned games. Please go back to the Welcome page and follow the instructions."
+        )

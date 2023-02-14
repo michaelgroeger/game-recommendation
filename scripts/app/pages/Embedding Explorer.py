@@ -3,13 +3,17 @@
 #############################################################################
 import os
 import warnings
-warnings.filterwarnings("ignore", message="`st.experimental_singleton` is deprecated. Please use the new command `st.cache_resource` instead, which has the same behavior. More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).")
+
+warnings.filterwarnings(
+    "ignore",
+    message="`st.experimental_singleton` is deprecated. Please use the new command `st.cache_resource` instead, which has the same behavior. More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).",
+)
 import pandas as pd
 import plotly.express as px
 import streamlit as st
 from data_processors.Dataset import get_n_highest_played_games
 from streamlit_helpers.load_data import load_dataframe, load_numpy
-from streamlit_helpers.load_elements import load_elements_to_list, build_user_vector
+from streamlit_helpers.load_elements import load_elements_to_list
 
 # Set page name
 st.set_page_config(
@@ -18,28 +22,31 @@ st.set_page_config(
 base_path = os.getcwd()
 # Call cached data such that they are available during this page
 # Initialization already_have
-if 'already_have' not in st.session_state:
+if "already_have" not in st.session_state:
     already_have = []
 else:
     already_have = st.session_state["already_have"]
 # Initialization
-if 'favourite_genres' not in st.session_state:
+if "favourite_genres" not in st.session_state:
     already_have = []
 else:
     favourite_genres = st.session_state["favourite_genres"]
 # load game containing all the side information
-game_informations = load_dataframe(path=os.path.join(
+game_informations = load_dataframe(
+    path=os.path.join(
         base_path,
         "files/data/subset_game_information_5000_most_played_games_prompts=False.parq",
     )
 )
 # Load original user game matrix for naive recommender
-user_game_matrix = load_dataframe(path=os.path.join(
+user_game_matrix = load_dataframe(
+    path=os.path.join(
         base_path, "files/data/subset_user_game_matrix_5000_most_played_games.parq"
     )
 )
 # Load content-based game embeddings for content based recommender
-game_embeddings = load_numpy(path=os.path.join(
+game_embeddings = load_numpy(
+    path=os.path.join(
         base_path,
         "files/data/game_embeddings_5000_most_played_games_prompts=False.npy",
     )
