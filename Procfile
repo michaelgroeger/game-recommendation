@@ -1,1 +1,0 @@
-web: sh install_environment.sh && start_app.sh

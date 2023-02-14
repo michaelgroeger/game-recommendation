@@ -66,22 +66,28 @@ if choice == "Select from list":
         )
 # Choice to import profile from Steam
 elif choice == "Import from Steam":
-    steam_id = st.text_input(
-        "Please input your steamid:", value="", placeholder="e.g. 76561198090676153"
-    )
-    # Case user input a steam id
-    if steam_id != "":
-        already_have, app_ids, playtimes_user = get_user_games(
-            user_id=steam_id,
-            user_game_matrix=user_game_matrix,
-            only_played=True,
-            must_be_present_in_dataset=True,
+    try:
+        steam_id = st.text_input(
+            "Please input your steamid:", value="", placeholder="e.g. 76561198090676153"
         )
-        user = build_user_vector(
-            user_game_matrix, already_have_ids=app_ids, playtimes=playtimes_user
-        )
-        if len(already_have) > 0:
-            st.success("Steam games imported", icon="✅")
+        # Case user input a steam id
+        if steam_id != "":
+            already_have, app_ids, playtimes_user = get_user_games(
+                user_id=steam_id,
+                user_game_matrix=user_game_matrix,
+                only_played=True,
+                must_be_present_in_dataset=True,
+            )
+            user = build_user_vector(
+                user_game_matrix, already_have_ids=app_ids, playtimes=playtimes_user
+            )
+            if len(already_have) > 0:
+                st.success("Steam games imported", icon="✅")
+    except:
+        st.success("Unfortunately this didn't work.", icon="❌")
+        st.markdown("Please make sure you entered a valid Steam ID. This link will tell you how you can find yours: [Link](https://www.ubisoft.com/en-gb/help/article/finding-your-steam-id/000060565#:~:text=To%20view%20your%20Steam%20ID%3A&text=Select%20your%20Steam%20username.&text=Locate%20the%20URL%20field%20beneath,the%20end%20of%20the%20URL.)")
+        st.markdown("Please make also sure your games are visible. Here you can find instruction on how to make your games publicly visible: [Link](https://asapguide.com/how-to-make-steam-profile-public/)")
+        st.markdown("Follow the steps and feel free to try again.")
 
 # Add generated user info to cached data
 st.session_state["already_have"] = already_have

@@ -181,3 +181,4 @@ data_new/
 for_app_backup.zip
 .DS_Store
 scripts/app/files/*
+.pre-commit-config.yaml
