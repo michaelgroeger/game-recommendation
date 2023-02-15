@@ -45,11 +45,6 @@ if "already_have" not in st.session_state:
 else:
     already_have = st.session_state["already_have"]
 # Initialization
-if "favourite_genres" not in st.session_state:
-    favourite_genres = []
-else:
-    favourite_genres = st.session_state["favourite_genres"]
-
 if "user" not in st.session_state:
     user = []
 else:
@@ -65,17 +60,14 @@ choice = st.selectbox(
 # Scenario user doesn't import steam profile
 if choice == "Select from list":
     st.markdown(
-        "Please fill this quick survey and you’ll never need to worry again what to play next!"
+        "Pick a few games and you'll never need to worry about what to play next!"
     )
-    # build to columns to be displayed in app and offer user to pick genres and apps
-    col1, col2 = st.columns(2)
-    with col1:
-        favourite_genres = st.multiselect("Pick your favourite genres", genres, help="It can happen that there aren't enough games for the selected genres. In these cases you might see less games than you would like to have recommended to you. Consider then leaving this field empty.")
-    with col2:
-        already_have = st.multiselect(
-            "What games do you already have?",
-            games,
-        )
+    # offer user to pick games
+    already_have = st.multiselect(
+        "Which games do you play?",
+        games,
+        help="If you want games from a certain genre consider putting those which you play and are of that genre."
+    )
     if len(already_have) > 0:
         st.write(
             "When you selected all relevant games, please proceed to the Recommendations via the side bar."
@@ -98,14 +90,20 @@ elif choice == "Import from Steam":
                 user_game_matrix, already_have_ids=app_ids, playtimes=playtimes_user
             )
             if len(already_have) > 0:
-                st.success("Steam games imported, please proceed to the Recommendations via the side bar", icon="✅")
+                st.success(
+                    "Steam games imported, please proceed to the Recommendations via the side bar",
+                    icon="✅",
+                )
     except:
         st.success("Unfortunately this didn't work.", icon="❌")
-        st.markdown("Please make sure you entered a valid Steam ID. This link will tell you how you can find yours: [Link](https://www.ubisoft.com/en-gb/help/article/finding-your-steam-id/000060565#:~:text=To%20view%20your%20Steam%20ID%3A&text=Select%20your%20Steam%20username.&text=Locate%20the%20URL%20field%20beneath,the%20end%20of%20the%20URL.)")
-        st.markdown("Please make also sure your games are visible. Here you can find instruction on how to make your games publicly visible: [Link](https://asapguide.com/how-to-make-steam-profile-public/)")
+        st.markdown(
+            "Please make sure you entered a valid Steam ID. This link will tell you how you can find yours: [Link](https://www.ubisoft.com/en-gb/help/article/finding-your-steam-id/000060565#:~:text=To%20view%20your%20Steam%20ID%3A&text=Select%20your%20Steam%20username.&text=Locate%20the%20URL%20field%20beneath,the%20end%20of%20the%20URL.)"
+        )
+        st.markdown(
+            "Please make also sure your games are visible. Here you can find instruction on how to make your games publicly visible: [Link](https://asapguide.com/how-to-make-steam-profile-public/)"
+        )
         st.markdown("Follow the steps and feel free to try again.")
 
 # Add generated user info to cached data
 st.session_state["already_have"] = already_have
-st.session_state["favourite_genres"] = favourite_genres
 st.session_state["user"] = user

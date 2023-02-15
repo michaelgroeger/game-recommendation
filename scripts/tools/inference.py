@@ -106,13 +106,19 @@ def naive_recommender_binary_input(
     if use_binary_times == True:
         closest_users[closest_users > 0] = 1
     mean_user = closest_users.mean(axis=0).sort_values(ascending=False)
-    mean_user_without_alread_have_ids = mean_user.drop(already_have_ids).index.tolist()[:num_recommendations]
+    mean_user_without_alread_have_ids = mean_user.drop(already_have_ids).index.tolist()[
+        :num_recommendations
+    ]
     # Get suggestions by reporting the sorted indices which correspond with the index in the game information
     return mean_user_without_alread_have_ids
 
 
 def content_based_recommender(
-    already_have_ids, game_information, game_embeddings, num_recommendations=10, return_all = False
+    already_have_ids,
+    game_information,
+    game_embeddings,
+    num_recommendations=10,
+    return_all=False,
 ):
     """Make recommendations based on a content-based approach.
 
@@ -146,11 +152,14 @@ def content_based_recommender(
     _, max_indices, _ = get_closest_vectors(
         np.expand_dims(mean_owned_games, axis=0),
         game_embeddings,
-        top_k=num_recommendations+len(owned_games),
+        top_k=num_recommendations + len(owned_games),
     )
     max_indices = np.squeeze(max_indices[max_indices != owned_games])
-    recommendations = game_information.iloc[max_indices]["appid"].tolist()[:num_recommendations]
+    recommendations = game_information.iloc[max_indices]["appid"].tolist()[
+        :num_recommendations
+    ]
     return recommendations
+
 
 def mask_user(user, occlusion, seed=41):
     """

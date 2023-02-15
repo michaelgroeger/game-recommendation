@@ -11,7 +11,6 @@ warnings.filterwarnings(
 
 import randfacts
 import streamlit as st
-from models.collaborative_filtering_recommender import CollabNNInference
 from st_pages import Page, show_pages
 from streamlit_helpers.load_data import load_dataframe, load_model, load_numpy
 from streamlit_helpers.load_elements import load_elements_to_list
@@ -72,21 +71,12 @@ st.success("Database is ready", icon="✅")
 # Display a random fact to ease waiting time for user
 facts.write(randfacts.get_fact())
 # load the model for the deep recommender
-trained_model = load_model(
+model = load_model(
     path=os.path.join(
         base_path,
-        "files/models/CollabNN/07_02_2023_13_54-collabnn-I7ULX-bcp=True-n_games=5000-n_users=11727-val_loss=0.3595-best_hit_rate=0.3200-diversity=0.1730-lr=0.0001-momentum=0.0-wd=0.0-top_k_users=5-min_games=20-min_playtimes=5.0-n_negative_samples=4.pt",
+        "files/models/model_binary_content_RB6A7.pt",
     )
 )
-model = CollabNNInference(
-    trained_model.user_factors,
-    trained_model.game_factors,
-    trained_model.idx_to_app_id,
-    trained_model.app_id_to_idx,
-    trained_model.reference_dataset,
-    binary_classification=True,
-)
-
 # Display sucess message
 st.success("Models are ready to help you finding your next game", icon="✅")
 st.success("We are ready to go, please proceed to the Welcome page", icon="🎉")

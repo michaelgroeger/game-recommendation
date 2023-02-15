@@ -26,11 +26,6 @@ if "already_have" not in st.session_state:
     already_have = []
 else:
     already_have = st.session_state["already_have"]
-# Initialization
-if "favourite_genres" not in st.session_state:
-    already_have = []
-else:
-    favourite_genres = st.session_state["favourite_genres"]
 # load game containing all the side information
 game_informations = load_dataframe(
     path=os.path.join(
@@ -59,21 +54,21 @@ games = load_elements_to_list(game_informations["name"], unique=False)
 base_path = os.getcwd()
 # Define mapping for genres such that colors are most distinct
 colors = {
-"Action":'#FE0202',
-"Adult Content":'#CA6609',
-"Adventure":'#2EFF00',
-"Casual":'#176605',
-"Early Access":'#798D75',
-"Free to Play":'#00FFF2',
-"Indie":'#05645F',
-"Massively Multiplayer":'#0060FF',
-"RPG":'#5464BC',
-"Racing":'#8C1693',
-"Simulation":'#F100FF',
-"Sports":'#FE9AD8',
-"Strategy":'#000000',
-"Unknown":'#A8A8A8',
-"Utilities":'#746464',
+    "Action": "#FE0202",
+    "Adult Content": "#CA6609",
+    "Adventure": "#2EFF00",
+    "Casual": "#176605",
+    "Early Access": "#798D75",
+    "Free to Play": "#00FFF2",
+    "Indie": "#05645F",
+    "Massively Multiplayer": "#0060FF",
+    "RPG": "#5464BC",
+    "Racing": "#8C1693",
+    "Simulation": "#F100FF",
+    "Sports": "#FE9AD8",
+    "Strategy": "#000000",
+    "Unknown": "#A8A8A8",
+    "Utilities": "#746464",
 }
 
 # Select embeddings to be displayed
@@ -170,8 +165,6 @@ fig = px.scatter_3d(
     hover_name="names",
     color_discrete_map=colors,
 )
-# allow_markings  = st.sidebar.button("Find game in embedding view")
-# if allow_markings == True:
 mark_game = st.sidebar.selectbox(
     "Select a game you would like to annotate",
     df["names"],

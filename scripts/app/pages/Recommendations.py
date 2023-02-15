@@ -10,7 +10,6 @@ warnings.filterwarnings(
 import os
 
 import streamlit as st
-from models.collaborative_filtering_recommender import CollabNNInference
 from streamlit_helpers.load_data import load_dataframe, load_model, load_numpy
 from streamlit_helpers.load_elements import load_elements_to_list
 from tools.inference import (
@@ -44,32 +43,20 @@ game_embeddings = load_numpy(
 genres = load_elements_to_list(game_informations["single_genre"], unique=True)
 # Get all game names for the app
 games = load_elements_to_list(game_informations["name"], unique=False)
-trained_model = load_model(
-    path=os.path.join(
-        base_path,
-        "files/models/CollabNN/07_02_2023_13_54-collabnn-I7ULX-bcp=True-n_games=5000-n_users=11727-val_loss=0.3595-best_hit_rate=0.3200-diversity=0.1730-lr=0.0001-momentum=0.0-wd=0.0-top_k_users=5-min_games=20-min_playtimes=5.0-n_negative_samples=4.pt",
-    )
-)
-model = CollabNNInference(
-    trained_model.user_factors,
-    trained_model.game_factors,
-    trained_model.idx_to_app_id,
-    trained_model.app_id_to_idx,
-    trained_model.reference_dataset,
-    binary_classification=True,
-)
-
 # Call cached data such that they are available during this page
+if "model" not in st.session_state:
+    model = load_model(
+        path=os.path.join(
+            base_path,
+            "files/models/model_binary_content_RB6A7.pt",
+        )
+    )
+else:
+    model = st.session_state["model"]
 if "already_have" not in st.session_state:
     already_have = []
 else:
     already_have = st.session_state["already_have"]
-# Initialization
-if "favourite_genres" not in st.session_state:
-    favourite_genres = []
-else:
-    favourite_genres = st.session_state["favourite_genres"]
-
 if "user" not in st.session_state:
     user = []
 else:
@@ -99,15 +86,19 @@ if show_content_based:
             game_information=game_informations,
             game_embeddings=game_embeddings,
             num_recommendations=n,
-            return_all=False
+            return_all=False,
         )
         # Catch situation where there are fewer recommendations than selected due to the fact that users don't have played enough games
         if len(recommendations) < n:
             n = len(recommendations)
         # Get images of recommmendations
         # Catch bug of dublicated images
-        relevant_features = game_informations.loc[game_informations["appid"].isin(recommendations)].copy()
-        relevant_features = relevant_features.drop_duplicates(subset='name', keep='first')
+        relevant_features = game_informations.loc[
+            game_informations["appid"].isin(recommendations)
+        ].copy()
+        relevant_features = relevant_features.drop_duplicates(
+            subset="name", keep="first"
+        )
         if n > len(relevant_features):
             n = len(relevant_features)
         images = relevant_features.loc[
@@ -132,18 +123,7 @@ if show_content_based:
 show_collaborative_filtering = st.checkbox("Collaborative Filtering Recommender")
 if show_collaborative_filtering:
     if len(already_have) > 0:
-        with st.spinner('Loading Recommendations from Collaborative Filtering:'):
-            if len(favourite_genres) > 0:
-                # Return all games ordered by their score and filter it the by genre in case user set this option
-                # Get recommendations based on naive recommender
-                recommendations = naive_recommender_binary_input(
-                    already_have_ids,
-                    user_game_matrix,
-                    num_recommendations=100,
-                    top_k_users=5,
-                    use_binary_times=False,
-                )
-            else:
+        with st.spinner("Loading Recommendations from Collaborative Filtering:"):
                 # Get recommendations based on naive recommender
                 recommendations = naive_recommender_binary_input(
                     already_have_ids,
@@ -151,14 +131,6 @@ if show_collaborative_filtering:
                     num_recommendations=n,
                     top_k_users=5,
                 )
-            if len(favourite_genres) > 0:
-                # Get images of recommmendations but with filtered genres
-                subset = game_informations[(game_informations["appid"].isin(recommendations)) & (game_informations["single_genre"].isin(favourite_genres))]
-                app_ids = subset["appid"].drop_duplicates().tolist()[:n]
-                images = subset["header_image"].drop_duplicates().tolist()[:n]
-                if len(app_ids) < n:
-                    n = len(app_ids)
-            else:
                 # Get images of recommmendations
                 images = game_informations.loc[
                     game_informations["appid"].isin(recommendations)
@@ -178,8 +150,8 @@ if show_collaborative_filtering:
 show_deep = st.checkbox("Deep Recommender")
 if show_deep:
     if len(already_have) > 0:
-        with st.spinner('Loading Recommendations from Deep Recommender:'):
-        # Get recommendations based on deep learning based recommender
+        with st.spinner("Loading Recommendations from Deep Recommender:"):
+            # Get recommendations based on deep learning based recommender
             recommendations = make_recommendations_deep_collaborative_filtering(
                 model=model,
                 content_embeddings=game_embeddings,

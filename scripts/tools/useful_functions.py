@@ -167,7 +167,7 @@ def get_closest_vectors(vector, matrix, top_k=10):
     return similarities, max_indices, top_k_sim
 
 
-def sample_users_having_at_least_n_games(
+def subset_users_having_at_least_n_games(
     n_games: int, min_playtime: float, user_game_matrix: pd.DataFrame
 ):
     """Will set all games with a playtime smaller then min playtime to zero and will only consider those users that have at least n_games.

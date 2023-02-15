@@ -26,6 +26,7 @@ def evaluate_recommender(
     use_content_embeddings=False,
     n_candidates=120,
     binarize=False,
+    verbose=False,
 ):
     """Function to evaluate the different recommendation systems simulating a cold start problem
 
@@ -124,8 +125,9 @@ def evaluate_recommender(
     # Get mean accuracy
     mean_accuracy = total_accuracy / len(test_users)
     # Get diversity score
-    diversity = len(set(all_recommendations_for_diversity)) / len(
+    mean_diversity = len(set(all_recommendations_for_diversity)) / len(
         all_recommendations_for_diversity
     )
-    print(f"Mean accurcay is {mean_accuracy}, diversity is {diversity}")
-    return mean_accuracy, diversity
+    if verbose == True:
+        print(f"Mean accurcay is {mean_accuracy}, diversity is {mean_diversity}")
+    return mean_accuracy, mean_diversity
