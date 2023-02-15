@@ -165,20 +165,5 @@ cython_debug/
 #.idea/
 
 # Large files
-data/*
-docs/planning_and_status_ds_project.pptx
-.vscode/settings.json
-model_storage/*
-for_app/subset_processed_game_information.csv
-for_app/umap_content_results.parq
-docs/~$Midterm_presentation.pptx
-transformed_data.parq
-/Users/michaelgroeger/workspace/data-science-project/cloudgaming/app/files
-cloudgaming/app/files/models/
-for_app/
-data_old/
-data_new/
-for_app_backup.zip
 .DS_Store
-scripts/app/files/*
 .pre-commit-config.yaml
