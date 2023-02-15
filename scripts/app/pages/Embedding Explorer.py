@@ -57,6 +57,24 @@ genres = load_elements_to_list(game_informations["single_genre"], unique=True)
 games = load_elements_to_list(game_informations["name"], unique=False)
 # Get base path so app works across systems
 base_path = os.getcwd()
+# Define mapping for genres such that colors are most distinct
+colors = {
+"Action":'#FE0202',
+"Adult Content":'#CA6609',
+"Adventure":'#2EFF00',
+"Casual":'#176605',
+"Early Access":'#798D75',
+"Free to Play":'#00FFF2',
+"Indie":'#05645F',
+"Massively Multiplayer":'#0060FF',
+"RPG":'#5464BC',
+"Racing":'#8C1693',
+"Simulation":'#F100FF',
+"Sports":'#FE9AD8',
+"Strategy":'#000000',
+"Unknown":'#A8A8A8',
+"Utilities":'#746464',
+}
 
 # Select embeddings to be displayed
 selected_recommenders = st.sidebar.selectbox(
@@ -150,7 +168,7 @@ fig = px.scatter_3d(
     z="third_axis",
     color="genres",
     hover_name="names",
-    color_discrete_sequence=df["color"],
+    color_discrete_map=colors,
 )
 # allow_markings  = st.sidebar.button("Find game in embedding view")
 # if allow_markings == True:
