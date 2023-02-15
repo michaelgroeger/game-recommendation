@@ -39,9 +39,21 @@ game_embeddings = load_numpy(
 genres = load_elements_to_list(game_informations["single_genre"], unique=True)
 # Get all game names for the app
 games = load_elements_to_list(game_informations["name"], unique=False)
-already_have = []
-favourite_genres = []
-user = []
+# Call cached data such that they are available during this page
+if "already_have" not in st.session_state:
+    already_have = []
+else:
+    already_have = st.session_state["already_have"]
+# Initialization
+if "favourite_genres" not in st.session_state:
+    favourite_genres = []
+else:
+    favourite_genres = st.session_state["favourite_genres"]
+
+if "user" not in st.session_state:
+    user = []
+else:
+    user = st.session_state["user"]
 
 # Display title
 st.title("Tell us which games you already have")
@@ -58,11 +70,15 @@ if choice == "Select from list":
     # build to columns to be displayed in app and offer user to pick genres and apps
     col1, col2 = st.columns(2)
     with col1:
-        favourite_genres = st.multiselect("Pick your favourite genres", genres)
+        favourite_genres = st.multiselect("Pick your favourite genres", genres, help="It can happen that there aren't enough games for the selected genres. In these cases you might see less games than you would like to have recommended to you. Consider then leaving this field empty.")
     with col2:
         already_have = st.multiselect(
             "What games do you already have?",
             games,
+        )
+    if len(already_have) > 0:
+        st.write(
+            "When you selected all relevant games, please proceed to the Recommendations via the side bar."
         )
 # Choice to import profile from Steam
 elif choice == "Import from Steam":
@@ -82,7 +98,7 @@ elif choice == "Import from Steam":
                 user_game_matrix, already_have_ids=app_ids, playtimes=playtimes_user
             )
             if len(already_have) > 0:
-                st.success("Steam games imported", icon="✅")
+                st.success("Steam games imported, please proceed to the Recommendations via the side bar", icon="✅")
     except:
         st.success("Unfortunately this didn't work.", icon="❌")
         st.markdown("Please make sure you entered a valid Steam ID. This link will tell you how you can find yours: [Link](https://www.ubisoft.com/en-gb/help/article/finding-your-steam-id/000060565#:~:text=To%20view%20your%20Steam%20ID%3A&text=Select%20your%20Steam%20username.&text=Locate%20the%20URL%20field%20beneath,the%20end%20of%20the%20URL.)")

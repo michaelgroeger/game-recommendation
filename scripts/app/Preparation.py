@@ -66,7 +66,7 @@ game_embeddings = load_numpy(
 # Get all genres for the app
 genres = load_elements_to_list(game_informations["single_genre"], unique=True)
 # Get all game names for the app
-games = load_elements_to_list(game_informations["name"], unique=False)
+games = load_elements_to_list(game_informations["name"], unique=True)
 # Display sucess message
 st.success("Database is ready", icon="✅")
 # Display a random fact to ease waiting time for user

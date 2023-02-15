@@ -13,6 +13,7 @@ def load_elements_to_list(series: pd.Series, unique: bool = False) -> list:
 @st.cache_data(ttl=120, show_spinner=False)
 def load_elements_to_list(series: pd.Series, unique: bool = False) -> list:
     if unique == True:
+
         return series.unique().tolist()
     else:
         return series.tolist()

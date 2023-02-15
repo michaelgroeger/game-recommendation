@@ -183,9 +183,28 @@ class CollabNN(nn.Module):
         # Select game embeddings
         game_embeddings = self.game_factors[app_ids]
         # feed embeddings into hidden layers
-        output = self.hidden(
-            torch.cat([populated_mean_embedding, game_embeddings], dim=1)
-        )
+        if self.game_content_embeddings is not None:
+            game_content_embeddings = self.game_content_embeddings[app_ids]
+            output = self.hidden(
+                torch.cat(
+                    [
+                        populated_mean_embedding,
+                        game_embeddings,
+                        game_content_embeddings,
+                    ],
+                    dim=1,
+                )
+            )
+        else:
+            output = self.hidden(
+                torch.cat(
+                    [
+                        populated_mean_embedding,
+                        game_embeddings,
+                    ],
+                    dim=1,
+                )
+            )
         # Feed into output layer
         output = self.out(output)
         return output.squeeze()

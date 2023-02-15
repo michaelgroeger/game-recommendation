@@ -74,6 +74,7 @@ def naive_recommender_binary_input(
     non_test_users: pd.DataFrame,
     num_recommendations: int,
     top_k_users: int,
+    use_binary_times: bool = True,
 ):
     """
     Naive recommender as baseline but using binary representations. Takes the entire binarized user-test matrix and picks the top k users which are most similar to the binarized user.
@@ -83,7 +84,8 @@ def naive_recommender_binary_input(
         already_have_ids (list): List of apps the user already has.
         non_test_users (pd.DataFrame): non test users. User game matrix
         num_recommendations (int): Top k games to return
-        top_k_users (int): Top k similar users to turn to
+        top_k_users (int): Top k similar users to select to generate recommendations
+        use_binary_times (bool): Whether to use binary times when summarizing the user. If False will use original playtimes.
 
     Returns:
         list list of appids which are most played and not owned by user
@@ -99,16 +101,18 @@ def naive_recommender_binary_input(
         top_k=top_k_users,
     )
     # Select users by max index, but from original matrix so we have the playtimes
-    closest_users = non_test_users.iloc[max_indices, :]
-    # mean their playtimes
+    closest_users = non_test_users.iloc[max_indices, :].copy()
+    # Binarize playtimes
+    if use_binary_times == True:
+        closest_users[closest_users > 0] = 1
     mean_user = closest_users.mean(axis=0).sort_values(ascending=False)
-    mean_user_without_alread_have_ids = mean_user.drop(already_have_ids)
+    mean_user_without_alread_have_ids = mean_user.drop(already_have_ids).index.tolist()[:num_recommendations]
     # Get suggestions by reporting the sorted indices which correspond with the index in the game information
-    return mean_user_without_alread_have_ids.index.tolist()[:num_recommendations]
+    return mean_user_without_alread_have_ids
 
 
 def content_based_recommender(
-    already_have_ids, game_information, game_embeddings, num_recommendations=10
+    already_have_ids, game_information, game_embeddings, num_recommendations=10, return_all = False
 ):
     """Make recommendations based on a content-based approach.
 
@@ -136,14 +140,17 @@ def content_based_recommender(
         game_information_not_owned
     ), f"Got {len(game_embeddings_not_owned)} vs. {len(game_information_not_owned)}"
     # Get top_k
+    if return_all == True:
+        # Case to return all games and then filter in the app
+        num_recommendations = len(game_embeddings)
     _, max_indices, _ = get_closest_vectors(
         np.expand_dims(mean_owned_games, axis=0),
-        game_embeddings_not_owned,
-        top_k=num_recommendations,
+        game_embeddings,
+        top_k=num_recommendations+len(owned_games),
     )
-    recommendations = game_information_not_owned.iloc[max_indices]["appid"].tolist()
+    max_indices = np.squeeze(max_indices[max_indices != owned_games])
+    recommendations = game_information.iloc[max_indices]["appid"].tolist()[:num_recommendations]
     return recommendations
-
 
 def mask_user(user, occlusion, seed=41):
     """

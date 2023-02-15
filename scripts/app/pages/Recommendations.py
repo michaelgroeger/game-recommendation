@@ -60,19 +60,20 @@ model = CollabNNInference(
 )
 
 # Call cached data such that they are available during this page
-# Initialization already_have
 if "already_have" not in st.session_state:
     already_have = []
 else:
     already_have = st.session_state["already_have"]
 # Initialization
 if "favourite_genres" not in st.session_state:
-    already_have = []
+    favourite_genres = []
 else:
     favourite_genres = st.session_state["favourite_genres"]
 
-
-user = st.session_state["user"]
+if "user" not in st.session_state:
+    user = []
+else:
+    user = st.session_state["user"]
 
 # Get appids of selected apps
 already_have_ids = game_informations[game_informations["name"].isin(already_have)][
@@ -88,8 +89,6 @@ n = st.number_input(
 st.markdown(
     "Please select the recommenders to get their recommendations based on your input"
 )
-# Load all available links to images such that we can load images of the recommended ones
-images = game_informations["header_image"].tolist()
 # Select box 1
 show_content_based = st.checkbox("Content-Based Recommender")
 if show_content_based:
@@ -100,14 +99,23 @@ if show_content_based:
             game_information=game_informations,
             game_embeddings=game_embeddings,
             num_recommendations=n,
+            return_all=False
         )
+        # Catch situation where there are fewer recommendations than selected due to the fact that users don't have played enough games
+        if len(recommendations) < n:
+            n = len(recommendations)
         # Get images of recommmendations
-        images = game_informations.loc[
-            game_informations["appid"].isin(recommendations)
+        # Catch bug of dublicated images
+        relevant_features = game_informations.loc[game_informations["appid"].isin(recommendations)].copy()
+        relevant_features = relevant_features.drop_duplicates(subset='name', keep='first')
+        if n > len(relevant_features):
+            n = len(relevant_features)
+        images = relevant_features.loc[
+            relevant_features["appid"].isin(recommendations)
         ]["header_image"].tolist()
         # Get original app id to be 100 % sure it works in the link to the store page
-        app_ids = game_informations.loc[
-            game_informations["appid"].isin(recommendations)
+        app_ids = relevant_features.loc[
+            relevant_features["appid"].isin(recommendations)
         ]["appid"].tolist()
         # Clean dublicates to catch bug that shows the same id twice
         app_ids = list(set(app_ids))
@@ -124,20 +132,40 @@ if show_content_based:
 show_collaborative_filtering = st.checkbox("Collaborative Filtering Recommender")
 if show_collaborative_filtering:
     if len(already_have) > 0:
-        # Get recommendations based on naive recommender
-        recommendations = naive_recommender_binary_input(
-            already_have_ids,
-            user_game_matrix,
-            num_recommendations=n,
-            top_k_users=5,
-        )
-        # Get images of recommmendations
-        images = game_informations.loc[
-            game_informations["appid"].isin(recommendations)
-        ]["header_image"].tolist()
-        app_ids = game_informations.loc[
-            game_informations["appid"].isin(recommendations)
-        ]["appid"].tolist()
+        with st.spinner('Loading Recommendations from Collaborative Filtering:'):
+            if len(favourite_genres) > 0:
+                # Return all games ordered by their score and filter it the by genre in case user set this option
+                # Get recommendations based on naive recommender
+                recommendations = naive_recommender_binary_input(
+                    already_have_ids,
+                    user_game_matrix,
+                    num_recommendations=100,
+                    top_k_users=5,
+                    use_binary_times=False,
+                )
+            else:
+                # Get recommendations based on naive recommender
+                recommendations = naive_recommender_binary_input(
+                    already_have_ids,
+                    user_game_matrix,
+                    num_recommendations=n,
+                    top_k_users=5,
+                )
+            if len(favourite_genres) > 0:
+                # Get images of recommmendations but with filtered genres
+                subset = game_informations[(game_informations["appid"].isin(recommendations)) & (game_informations["single_genre"].isin(favourite_genres))]
+                app_ids = subset["appid"].drop_duplicates().tolist()[:n]
+                images = subset["header_image"].drop_duplicates().tolist()[:n]
+                if len(app_ids) < n:
+                    n = len(app_ids)
+            else:
+                # Get images of recommmendations
+                images = game_informations.loc[
+                    game_informations["appid"].isin(recommendations)
+                ]["header_image"].tolist()
+                app_ids = game_informations.loc[
+                    game_informations["appid"].isin(recommendations)
+                ]["appid"].tolist()
         for i in range(n):
             st.markdown(
                 f"[![Recommendation]({images[i].format(i + 1)})](https://store.steampowered.com/app/{app_ids[i]}/)"
@@ -150,19 +178,20 @@ if show_collaborative_filtering:
 show_deep = st.checkbox("Deep Recommender")
 if show_deep:
     if len(already_have) > 0:
+        with st.spinner('Loading Recommendations from Deep Recommender:'):
         # Get recommendations based on deep learning based recommender
-        recommendations = make_recommendations_deep_collaborative_filtering(
-            model=model,
-            content_embeddings=game_embeddings,
-            use_content_embeddings=False,
-            already_have_ids=already_have_ids,
-            user=user,
-            reference_dataset=user_game_matrix,
-            n_candidates=120,
-            top_k_users=13,
-            num_recommendations=n,
-            binarize=True,
-        )
+            recommendations = make_recommendations_deep_collaborative_filtering(
+                model=model,
+                content_embeddings=game_embeddings,
+                use_content_embeddings=False,
+                already_have_ids=already_have_ids,
+                user=user,
+                reference_dataset=user_game_matrix,
+                n_candidates=120,
+                top_k_users=13,
+                num_recommendations=n,
+                binarize=True,
+            )
         # Convert from indices to original app ids
         recommendations = [model.idx_to_app_id[i.item()] for i in recommendations]
         images = game_informations.loc[
