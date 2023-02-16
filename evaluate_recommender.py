@@ -28,7 +28,7 @@ parser.add_argument(
     help="Minimum amount of games a user need to have to be considered",
 )
 parser.add_argument(
-    "-nu", "--n_test_users", type=int, default=20, help="Amount of test users"
+    "-nu", "--n_test_users", type=int, default=50, help="Amount of test users"
 )
 parser.add_argument(
     "-ncu",

@@ -57,12 +57,14 @@ def get_Nvidia_games(
     get_first_n_games: int = None,
     path_to_nvidia_games: str = None,
 ) -> list:
-    """Returns games from Nvidia
+    """
+    Will scrape data if path_to_nvidia_games does not exist or load data if it does.
 
     Args:
         url (str): url where games are listed
         classname (str): javascript token which holds game information
         get_first_n_games (int, optional): Whether to limit the scraping to the first n games. Defaults to None.
+        path_to_nvidia_games (str): Path where priorly scraped games are saved.
 
     Returns:
         list: game names
