@@ -88,5 +88,5 @@ You can then inspect the files in:
 ./tests/steam_games_test_data
 ```
 
-They contain some outputs from the scraping of the nvidia game website and the Steam API. Since these endpoints change on a regular basis the test may fail. For this I provided you data from prior runs to inspect.
-If the test cases succeed and there is new data the old files should have been overwritten.
+They contain outputs from scraping the nvidia game website and the Steam API. Since these endpoints change on a regular basis the test may fail. For this, I provided you data from prior runs to inspect.
+If the test cases succeed and there is new data, the old files should have been overwritten.
