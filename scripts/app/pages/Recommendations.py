@@ -91,29 +91,20 @@ if show_content_based:
         # Catch situation where there are fewer recommendations than selected due to the fact that users don't have played enough games
         if len(recommendations) < n:
             n = len(recommendations)
-        # Get images of recommmendations
-        # Catch bug of dublicated images
+        #Subset data
         relevant_features = game_informations.loc[
             game_informations["appid"].isin(recommendations)
         ].copy()
+        # Catch bug
         relevant_features = relevant_features.drop_duplicates(
             subset="name", keep="first"
         )
         if n > len(relevant_features):
             n = len(relevant_features)
-        images = relevant_features.loc[
-            relevant_features["appid"].isin(recommendations)
-        ]["header_image"].tolist()
-        # Get original app id to be 100 % sure it works in the link to the store page
-        app_ids = relevant_features.loc[
-            relevant_features["appid"].isin(recommendations)
-        ]["appid"].tolist()
-        # Clean dublicates to catch bug that shows the same id twice
-        app_ids = list(set(app_ids))
         # Display images and open store page when user clicks on link
         for i in range(n):
             st.markdown(
-                f"[![Recommendation]({images[i].format(i + 1)})](https://store.steampowered.com/app/{app_ids[i]}/)"
+                f"[![Recommendation]({relevant_features.iloc[i,:]['header_image'].format(i + 1)})](https://store.steampowered.com/app/{relevant_features.iloc[i,:]['appid']}/)"
             )
     else:
         st.write(
