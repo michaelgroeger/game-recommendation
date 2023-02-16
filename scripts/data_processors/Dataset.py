@@ -44,13 +44,12 @@ class UserGameDataseEfficient(Dataset):
 
     def add_negatives(self):
         # Report to terminal which dataset is being build
-        print(f"Building dataset {self.dataset_name}")
+        print(f"Building new version of dataset {self.dataset_name} by providing new negative samples for next run.")
         # Get all positives
         app_id_positive = pd.Series(self.user_game_dataset["app_id_mapped"])
         user_id_positive = pd.Series(self.user_game_dataset["user_id"])
         playtime_positive = pd.Series(self.user_game_dataset["playtime"])
         # Get sample enough negatives such that we have zero_one_ratio per positive
-        print("Sampling negatives to build new epoch dataset")
         negative_data = self.user_game_dataset_all_zeros.sample(
             len(self.user_game_dataset) * self.zero_one_ratio
         )
@@ -74,10 +73,8 @@ class UserGameDataseEfficient(Dataset):
         self.epoch_dataset = self.epoch_dataset.astype(
             {"user_id": int, "app_id_mapped": int, "playtime": float}
         )
-        print("shuffle")
         # Shuffle dataset
         self.epoch_dataset = self.epoch_dataset.sample(frac=1).reset_index(drop=True)
-        print("Export to Tensors")
         self.epoch_dataset = (
             torch.LongTensor(self.epoch_dataset["user_id"].values),
             torch.LongTensor(self.epoch_dataset["app_id_mapped"].values),
@@ -88,7 +85,6 @@ class UserGameDataseEfficient(Dataset):
             == len(self.epoch_dataset[1])
             == len(self.epoch_dataset[2])
         ), f"Something went wrong, length of user ids, appids, playtimes differ but should be the same"
-        print(f"Done, Dataset {self.dataset_name} is ready for next epoch.")
 
     def __getitem__(self, idx):
         user_ids = self.epoch_dataset[0][idx]
@@ -156,7 +152,7 @@ class HitRatioDataset(Dataset):
 
     def add_negatives(self):
         # Takes one positive instance and adds zero_one_ratio negatives to it and exports it to a dataframe
-        print(f"Building dataset {self.dataset_name}")
+        print(f"Building new version of dataset {self.dataset_name} by providing new negative samples for next run.")
         self.sample_unique_positves()
         app_ids = pd.Series(self.hit_ratio_positives["app_id_mapped"])
         user_ids = pd.Series(self.hit_ratio_positives["user_id"])
@@ -185,7 +181,6 @@ class HitRatioDataset(Dataset):
         self.epoch_dataset = self.epoch_dataset.astype(
             {"user_id": int, "app_id_mapped": int, "playtime": float}
         )
-        print(f"Done, Dataset {self.dataset_name} is ready for next epoch.")
 
     def __getitem__(self, user_id):
         # Query 1 batch per user that is one positive and all their negatives. Transfer data to Tensors

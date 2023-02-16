@@ -107,6 +107,7 @@ class CollabNN(nn.Module):
         n_users,
         n_games,
         embedding_dim,
+        game_content_embeddings=None,
         idx_to_app_id=None,
         app_id_to_idx=None,
         reference_dataset=None,
@@ -118,6 +119,7 @@ class CollabNN(nn.Module):
             n_users (int): Length of user factors tensor.
             n_games (int): Length of game factors tensor.
             embedding_dim (int): Num columns of factors tensor.
+            game_content_embeddings (torch.Tensor): Content embeddings of detailed description of games.
             idx_to_app_id (dict, optional): Mapping from id to appid. Defaults to None.
             app_id_to_idx (dict, optional): Mapping from appid to id. Defaults to None.
             reference_dataset (pd.DataFrame, optional): Dataset containing the training users. Useful to extract n_closest users to cold-start user in later stages. Defaults to None.
@@ -129,11 +131,18 @@ class CollabNN(nn.Module):
         self.embedding_dim = embedding_dim
         self.user_factors = create_params([self.n_users, self.embedding_dim])
         self.game_factors = create_params([self.n_games, self.embedding_dim])
+        self.game_content_embeddings = game_content_embeddings
+        if self.game_content_embeddings == None:
+            input_features = embedding_dim + embedding_dim
+        else:
+            input_features = (
+                embedding_dim + embedding_dim + self.game_content_embeddings.shape[1]
+            )
         # Build hidden layers
         self.hidden = nn.Sequential(
-            nn.Linear(in_features=embedding_dim + embedding_dim, out_features=16),
+            nn.Linear(in_features=input_features, out_features=128),
             nn.ReLU(),
-            nn.Linear(in_features=16, out_features=64),
+            nn.Linear(in_features=128, out_features=64),
             nn.ReLU(),
             nn.Linear(in_features=64, out_features=32),
             nn.ReLU(),
@@ -158,7 +167,16 @@ class CollabNN(nn.Module):
     def forward(self, user_ids, app_ids):
         user_embeddings = self.user_factors[user_ids]
         game_embeddings = self.game_factors[app_ids]
-        output = self.hidden(torch.cat([user_embeddings, game_embeddings], dim=1))
+        # feed embeddings into hidden layers
+        if self.game_content_embeddings is not None:
+            game_content_embeddings = self.game_content_embeddings[app_ids]
+            output = self.hidden(
+                torch.cat(
+                    [user_embeddings, game_embeddings, game_content_embeddings], dim=1
+                )
+            )
+        else:
+            output = self.hidden(torch.cat([user_embeddings, game_embeddings], dim=1))
         output = self.out(output)
         return output.squeeze()
 
@@ -208,4 +226,3 @@ class CollabNN(nn.Module):
         # Feed into output layer
         output = self.out(output)
         return output.squeeze()
-

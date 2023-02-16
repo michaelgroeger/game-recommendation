@@ -8,14 +8,16 @@ To have the easiest setup experience make sure the following bash scripts are ex
 install_environment.sh
 reproduce_benchmark_results.sh
 start_app.sh
+run_scraping_tests.sh
 ```
 
 If unsure or if they are not executable yet, please run the following commands in your terminal:
 
 ```zsh
-chmod 777 install_environment.sh
-chmod 777 reproduce_benchmark_results.sh
-chmod 777 start_app.sh
+chmod 700 install_environment.sh
+chmod 700 reproduce_benchmark_results.sh
+chmod 700 start_app.sh
+chmod 700 run_scraping_tests.sh
 ```
 
 ## Installing the environment
@@ -48,6 +50,15 @@ To reproduce the benchmark results please run in your terminal
 reproduce_benchmark_results.sh
 ```
 
+or run directly in your terminal:
+
+```zsh
+python evaluate_recommender.py
+```
+
+## Train a recommender
+
+
 ## Bring App online
 
 To start the App locally, run
@@ -56,10 +67,20 @@ To start the App locally, run
 start_app.sh
 ```
 
-## Showcase Scraping pipeline
+## Test Scraping pipeline
 
-To showcase the scraping scripts, simply run
+To test the scraping scripts, simply run
 
 ```zsh
-start_app.sh
+run_scraping_tests.sh
 ```
+
+You can then inspect the files in:
+
+```zsh
+tests/nvidia_games_test_data
+tests/steam_games_test_data
+```
+
+They contain some outputs from the scraping of the nvidia game website and the Steam API. Since these endpoints change on a regular basis the test may fail. For this I provided you data from prior runs to inspect. 
+If the test cases succeed and there is new data the old files should have been overwritten. 

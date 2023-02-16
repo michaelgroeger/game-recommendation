@@ -130,5 +130,5 @@ def evaluate_recommender(
         all_recommendations_for_diversity
     )
     if verbose == True:
-        print(f"Mean accurcay is {mean_accuracy}, diversity is {mean_diversity}")
+        print(f"Mean accurcay is {mean_accuracy}, mean diversity is {mean_diversity}")
     return mean_accuracy, mean_diversity

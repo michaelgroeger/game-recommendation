@@ -10,12 +10,13 @@ import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import wandb
 from data_processors.Dataset import HitRatioDataset
 from tools.evaluation_cold_start import evaluate_recommender
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+
+import wandb
 
 
 def get_hit_rate(dataset, model, top_k):
@@ -27,7 +28,7 @@ def get_hit_rate(dataset, model, top_k):
         top_k (int): Take top k ranked games to see if positive is in it
 
     Returns:
-        hit_rate (float), diversity_score(float): Returns the hit rate for the given parameters and inputs and the diversity score
+        float, float: Returns the hit rate for the given parameters and inputs and the diversity score
     """
     # get user_id and _app_id
     users = dataset.epoch_dataset["user_id"].unique()
@@ -37,7 +38,7 @@ def get_hit_rate(dataset, model, top_k):
         # Retrieve batch per user
         user_ids, app_ids, playtimes = dataset[i]
         # Get game which is played (ground truth)
-        gt = app_ids[(playtimes == 1).nonzero(as_tuple=True)[0]].item()
+        gt = app_ids[(playtimes > 0).nonzero(as_tuple=True)[0]].item()
         # Rerank inputs
         outputs = model(user_ids, app_ids)
         # Get top scored items
@@ -65,7 +66,7 @@ def get_train_test_val_of_dataframe(df: pd.DataFrame):
         df (pd.DataFrame): Dataframe containing data
 
     Returns:
-        train (pd.DataFrame), validate (pd.DataFrame), test (pd.DataFrame): train dataset (60 %), test dataset (20 %), val dataset (20 %))
+        pd.DataFrame, pd.DataFrame, pd.DataFrame: train dataset (60 %), test dataset (20 %), val dataset (20 %))
     """
     train, validate, test = np.split(
         df.sample(frac=1, random_state=42), [int(0.6 * len(df)), int(0.8 * len(df))]
@@ -119,6 +120,9 @@ def train_test_validate(
         binary_classification (bool, optional): Whether we are performing binary classification. Defaults to False.
         use_wandb (bool, optional): Whether to track experiment in weights and biases. Defaults to False.
         identifier (str, optional): Unique identifier for a model. Defaults to "no_identifier".
+
+    Returns:
+        _type_: _description_
     """
     # Define loss function
     if binary_classification == True:
@@ -137,8 +141,11 @@ def train_test_validate(
     # define monitoring stats in a way they are overwritten later
     best_val_loss = 10000000000
     best_hit_rate = 0.0
+    best_cold_start_overall = 0.0
     model_name_old = None
     model, criterion = model.to(device), criterion.to(device)
+    if model.game_content_embeddings is not None:
+        model.game_content_embeddings = model.game_content_embeddings.to(device)
     # Setup Learning rate scheduling
     T_max = len(train_loader) * n_epochs
     if lr_scheduling == True:
@@ -151,6 +158,9 @@ def train_test_validate(
     hit_rates.append(hit_rate)
     all_diversity.append(diversity_score)
     # Get initial accuracy and diversity before training
+    model = model.cpu()
+    if model.game_content_embeddings is not None:
+        model.game_content_embeddings = model.game_content_embeddings.cpu()
     cold_start_accuracy, cold_start_diversity = evaluate_recommender(
         recommendation_engine="DeepCollaborativeFiltering",
         test_users=test_users,
@@ -160,11 +170,15 @@ def train_test_validate(
         game_information=game_information,
         game_embeddings=None,
     )
+    model = model.to(device)
+    if model.game_content_embeddings is not None:
+        model.game_content_embeddings = model.game_content_embeddings.to(device)
     if use_wandb == True:
         wandb.log(
             {
                 "cold_start_accuracy": cold_start_accuracy,
                 "cold_start_diversity": cold_start_diversity,
+                "cold_start_overall": cold_start_accuracy + cold_start_diversity,
             }
         )
     # Start training
@@ -262,28 +276,10 @@ def train_test_validate(
                 f"Epoch: {epoch}, Loss: {train_mean_loss:.4f}, Validation Loss: {val_mean_loss:.4f}"
             )
 
-        # Do checkpointing
-        if checkpointing == True:
-            # If we got best loss and best hit rate
-            if best_val_loss > val_mean_loss and best_hit_rate < hit_rates[-1]:
-                if model_name_old != None and Path(model_name_old).is_file():
-                    # Remove old best model
-                    os.remove(model_name_old)
-                # Overwrite
-                best_val_loss = val_mean_loss
-                best_hit_rate = hit_rates[-1]
-                all_diversity[-1]
-                # create model name
-                model_name = f"{dt_string}-{model.model_name}-{identifier}-bcp={binary_classification}-n_games={model.n_games}-n_users={model.n_users}-val_loss={best_val_loss:.4f}-best_hit_rate={best_hit_rate:.4f}-diversity={all_diversity[hit_rates.index(best_hit_rate)]:.4f}-lr={lr}-wd={weight_decay}-top_k_users={top_k_users}-min_games={model.min_games}-min_playtimes={model.min_playtime}-n_negative_samples={model.n_negative_samples}.pt"
-                print(
-                    f"Found best checkpoint with val_loss {best_val_loss:.4f} and custom test acc {best_hit_rate:.4f}, will export model to {os.path.join(model_path, model_name)}"
-                )
-                # Export
-                torch.save(model, os.path.join(model_path, model_name))
-                model_name_old = os.path.join(model_path, model_name)
-        # Resample the negatives so we show diverse negatives for each user
-        train_loader.dataset.add_negatives()
-        hit_rate_dataset.add_negatives()
+        # Send model to cpu since cold start benchmarking not built for gpu
+        model = model.cpu()
+        if model.game_content_embeddings is not None:
+            model.game_content_embeddings = model.game_content_embeddings.cpu()
         # Get cold start accuracy and diversity
         cold_start_accuracy, cold_start_diversity = evaluate_recommender(
             recommendation_engine="DeepCollaborativeFiltering",
@@ -293,14 +289,42 @@ def train_test_validate(
             model=model,
             game_information=game_information,
             game_embeddings=None,
+            verbose=True
         )
+        cold_start_overall = cold_start_accuracy + cold_start_diversity
+        model = model.to(device)
+        if model.game_content_embeddings is not None:
+            model.game_content_embeddings = model.game_content_embeddings.to(device)
         if use_wandb == True:
             wandb.log(
                 {
                     "cold_start_accuracy": cold_start_accuracy,
                     "cold_start_diversity": cold_start_diversity,
+                    "cold_start_overall": cold_start_overall,
                 }
             )
+
+        # Do checkpointing
+        if checkpointing == True:
+            # If we got best loss and best hit rate
+            if cold_start_overall > best_cold_start_overall:
+                if model_name_old != None and Path(model_name_old).is_file():
+                    # Remove old best model
+                    os.remove(model_name_old)
+                # Overwrite
+                best_cold_start_overall = cold_start_overall
+                # create model name
+                model_name = f"{dt_string}-{model.model_name}-{identifier}-binary={binary_classification}-n_games={model.n_games}-n_users={model.n_users}-best_cold_start_overall={best_cold_start_overall}-acc={cold_start_accuracy}-diversity={cold_start_diversity}-lr={lr}-wd={weight_decay}-top_k_users={top_k_users}-min_games={model.min_games}-min_playtimes={model.min_playtime}-n_negative_samples={model.n_negative_samples}.pt"
+                print(
+                    f"Found best checkpoint with val_loss {best_val_loss:.4f} and custom test acc {best_hit_rate:.4f}, will export model to {os.path.join(model_path, model_name)}"
+                )
+                # Export
+                torch.save(model, os.path.join(model_path, model_name))
+                model_name_old = os.path.join(model_path, model_name)
+        # Resample the negatives so we show diverse negatives for each user
+        train_loader.dataset.add_negatives()
+        hit_rate_dataset.add_negatives()
+
     # Test loop
     with torch.no_grad():
         test_loss = 0.0
