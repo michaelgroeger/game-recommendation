@@ -43,9 +43,10 @@ def evaluate_recommender(
         use_content_embeddings (bool, optional): Whether to user content embeddings for retrieval in the collaborative filtering model. Defaults to False.
         n_candidates (int, optional): How many games should be retrieved for the model to be ranked. Defaults to 120.
         binarize (bool, optional): Whether to binarize the test and non-test users to determine their similarity. Defaults to False.
+        verbose (bool, optional): Whether to print the results or not. Defaults to False.
 
     Returns:
-        _type_: _description_
+        mean_accuracy(float), mean_diversity(float)
     """
     # Collect all accurcay metrics during evaluation
     total_accuracy = 0.0

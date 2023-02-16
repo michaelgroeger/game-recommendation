@@ -372,6 +372,7 @@ class AllDataProcessor(DataProcessor):
                 genres = None
             else:
                 genres = list(self.all_dataframe["genre"][idx])
+            # Extract data to be fed into prompts
             metacritic_score = str((self.all_dataframe["metacritic_score"][idx]))
             controller_support = str((self.all_dataframe["controller_support"][idx]))
             description = self.add_promtps_to_text(

@@ -28,7 +28,7 @@ class Scraper:
         """Sends GET statement to webserver to retrieve the answer and convert it to JSON
 
         Returns:
-            _type_: _description_
+            dict: Answer of GET request
         """
         return requests.get(self.url).json()
 
@@ -79,13 +79,13 @@ class Scraper:
             json.dump(dictionary, f, indent=4)
 
     def load_json(self, path: str) -> object:
-        """Load pickled object
+        """Load json object
 
         Args:
             path (str): path to object
 
         Returns:
-            object: Anything that was pickled before
+            dict: Anything that was json before
         """
         with open(path, "r") as f:
             file = json.load(f)

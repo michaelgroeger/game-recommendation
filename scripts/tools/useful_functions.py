@@ -23,7 +23,7 @@ def get_Steam_games(url: str, path_to_steam_games: str = None) -> list:
         path_to_steam_games (str): local path to predownloaded data if exists
 
     Returns:
-        list: _description_
+        list: 
     """
     steam_1 = SteamScraper(url=url)
     if path_to_steam_games != None and Path(path_to_steam_games).is_file():

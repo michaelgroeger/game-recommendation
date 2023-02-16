@@ -117,7 +117,7 @@ def main(
     game_information=game_information,
     game_embeddings=game_embeddings,
     game_embeddings_prompts=game_embeddings_prompts,
-    seeds=[41, 0],#, 34],
+    seeds=[41, 0, 34],
 ):
     results = {
         "Deep Recommender binary with content embeddings": [],

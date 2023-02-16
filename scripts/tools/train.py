@@ -27,7 +27,7 @@ def get_hit_rate(dataset, model, top_k):
         top_k (int): Take top k ranked games to see if positive is in it
 
     Returns:
-        float, float: Returns the hit rate for the given parameters and inputs and the diversity score
+        hit_rate (float), diversity_score(float): Returns the hit rate for the given parameters and inputs and the diversity score
     """
     # get user_id and _app_id
     users = dataset.epoch_dataset["user_id"].unique()
@@ -65,7 +65,7 @@ def get_train_test_val_of_dataframe(df: pd.DataFrame):
         df (pd.DataFrame): Dataframe containing data
 
     Returns:
-        pd.DataFrame, pd.DataFrame, pd.DataFrame: train dataset (60 %), test dataset (20 %), val dataset (20 %))
+        train (pd.DataFrame), validate (pd.DataFrame), test (pd.DataFrame): train dataset (60 %), test dataset (20 %), val dataset (20 %))
     """
     train, validate, test = np.split(
         df.sample(frac=1, random_state=42), [int(0.6 * len(df)), int(0.8 * len(df))]
@@ -119,9 +119,6 @@ def train_test_validate(
         binary_classification (bool, optional): Whether we are performing binary classification. Defaults to False.
         use_wandb (bool, optional): Whether to track experiment in weights and biases. Defaults to False.
         identifier (str, optional): Unique identifier for a model. Defaults to "no_identifier".
-
-    Returns:
-        _type_: _description_
     """
     # Define loss function
     if binary_classification == True:

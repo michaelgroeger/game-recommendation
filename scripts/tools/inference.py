@@ -27,7 +27,7 @@ def naive_recommender(
         already_have_ids (list, optional): List of apps the user already has. Defaults to None.
 
     Returns:
-        list list of appids which are most played and not owned by user
+        top_k_games (list): list of appids which are most played and not owned by user
     """
     # Get closest users
     _, max_indices, _ = get_closest_vectors(
@@ -42,7 +42,8 @@ def naive_recommender(
     # Get only these games which are not in user
     mean_user_without_alread_have_ids = mean_user.drop(already_have_ids)
     # Return top_k games according to mean playtime
-    return mean_user_without_alread_have_ids.index.tolist()[:num_recommendations]
+    top_k_games = mean_user_without_alread_have_ids.index.tolist()[:num_recommendations]
+    return top_k_games
 
 
 def build_binary_representations(
@@ -55,7 +56,7 @@ def build_binary_representations(
         already_have_ids (list): List of apps the user already has.
 
     Returns:
-        pd.Series, pd.DataFrame: Binarized versions of the test user and the reference user-game matrix
+        inference_user (pd.Series), users_binary (pd.DataFrame): Binarized versions of the test user and the reference user-game matrix
     """
     # Build binary user vector by already_have_ids
     # pick some user as body
@@ -88,7 +89,7 @@ def naive_recommender_binary_input(
         use_binary_times (bool): Whether to use binary times when summarizing the user. If False will use original playtimes.
 
     Returns:
-        list list of appids which are most played and not owned by user
+        mean_user_without_alread_have_ids (list): list of appids which are most played and not owned by user
     """
     # Get binary representations
     inference_user, users_binary = build_binary_representations(
@@ -171,7 +172,7 @@ def mask_user(user, occlusion, seed=41):
         seed (int, optional): Seed for sampling operations. Defaults to 41.
 
     Returns:
-        list, list: List of ids which will be shown to the algorithms. List of ids which should be reconstructed.
+        already_have_ids (list), to_be_reconstructed_games (list): List of ids which will be shown to the algorithms. List of ids which should be reconstructed.
     """
     # Split into known games and occluded games
     # sample n games so we delete occulsion % of them wich is then to be reconstruted
@@ -200,7 +201,7 @@ def retrieval(
         use_content_embeddings (bool, optional): Whether to use the content based embeddings to retrieve candidates. Defaults to False.
 
     Returns:
-        list of candidate games to be ranked by model
+        candidate_games (list): list of candidate games to be ranked by model
     """
     if use_content_embeddings == True:
         game_embeddings_already_have_ids = content_embeddings[known_games]
