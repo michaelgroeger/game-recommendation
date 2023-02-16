@@ -1,4 +1,4 @@
-# data-science-project
+# Game Recommendation Project
 
 ## Getting started
 
@@ -46,6 +46,8 @@ git lfs install
 # pulls large files
 git lfs pull
 ```
+
+If you have any issues, please read the messages I provided in ```./install_environment.sh``` they provide pointers how the issue might be resolved.
 
 For the following scripts please make sure the environment 'project' is activated in you terminal. If unsure please run:
 
@@ -107,4 +109,18 @@ You can then inspect the files in:
 ```
 
 They contain outputs from scraping the nvidia game website and the Steam API. Since these endpoints change on a regular basis or the IP Address got blocked the tests may fail. For this, I provided you data from prior runs to inspect.
-If the test cases succeed and there is new data, the old files should have been overwritten.
+If the test cases succeed and there is new data, the old files should have been overwritten. If you get an error such as: ```selenium.common.exceptions.WebDriverException: Message: unknown error: cannot find Chrome binary```, then check
+out this stackoverflow post which might help: [Link](https://stackoverflow.com/questions/46026987/selenium-gives-selenium-common-exceptions-webdriverexception-message-unknown). Its possible linked to the fact that you don't have Chrome or
+chromedriver installed.
+
+## Closing Remarks
+
+This repository was tested and worked in:
+
+```zsh
+MacOS: Version 12.5.1
+Ubuntu:
+```
+
+During the tests it seemed that at least 8 GB of RAM should be available for everything to be running smoothly.
+We hope you enjoy this work!

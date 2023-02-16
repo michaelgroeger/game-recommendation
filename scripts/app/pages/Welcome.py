@@ -76,7 +76,7 @@ if choice == "Select from list":
 elif choice == "Import from Steam":
     try:
         steam_id = st.text_input(
-            "Please input your steamid:", value="", placeholder="e.g. 76561198090676153"
+            "Please input your steamid:", value="", placeholder="e.g. 76561198170260211"
         )
         # Case user input a steam id
         if steam_id != "":
