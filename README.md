@@ -119,7 +119,7 @@ This repository was tested and worked in:
 
 ```zsh
 MacOS: Version 12.5.1
-Ubuntu:
+Ubuntu: Version 22.04
 ```
 
 During the tests it seemed that at least 8 GB of RAM should be available for everything to be running smoothly.
