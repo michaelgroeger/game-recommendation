@@ -1,2 +1,2 @@
  cd scripts/app
- streamlit run Preparation.py --server.headless true
+ streamlit run Preparation.py
