@@ -9,11 +9,11 @@ else
 fi
 # Change to ~/Anaconda3/etc/profile.d/conda.sh in case you don't use miniconda
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate project 
+conda activate project
 if [ $? -eq 0 ]; then
   echo "Conda environment activated."
 else
-  echo "Conda environment activation failed. Please check if the environment project exists by running conda env list"
+  echo "Conda environment activation failed. Please check if the environment project exists by running conda env list. Alternatively it might be related to this command 'source ~/miniconda3/etc/profile.d/conda.sh'. Please check if this path exists and if not find your conda.sh file and adjust the path accordingly."
   exit 1
 
 fi
@@ -50,7 +50,7 @@ if [ $? -eq 0 ]; then
   echo "Installation of git lfs suceeded"
   git lfs pull
 else
-  echo "Installation of git lfs failed. Please refer to https://git-lfs.com/ on how to install it. You need it to download large files such as models and data"
+  echo "Installation of git lfs failed. Please refer to https://git-lfs.com/ on how to install it. Additionally check out this link which might also help https://stackoverflow.com/questions/48734119/git-lfs-is-not-a-git-command-unclear. You need it to download large files such as models and data"
   exit 1
 fi
 

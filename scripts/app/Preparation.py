@@ -2,7 +2,7 @@
 # First page of the App, here we define the naming of the pages and load the data which will be accessible during the app interaction #
 #######################################################################################################################################
 import os
-import warnings
+
 import randfacts
 import streamlit as st
 from st_pages import Page, show_pages

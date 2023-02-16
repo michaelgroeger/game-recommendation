@@ -89,7 +89,7 @@ If you see a message like
 2023-02-16 11:48:06.772 `st.experimental_singleton` is deprecated...
 ```
 
-Don't worry about that. Simply refresh the page or proceed to Recommendations and the message will be gone for this session. 
+Don't worry about that. Simply refresh the page or proceed to Recommendations and the message will be gone for this session.
 
 ## Test Scraping pipeline
 
