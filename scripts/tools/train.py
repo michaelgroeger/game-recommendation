@@ -168,6 +168,7 @@ def train_test_validate(
         model=model,
         game_information=game_information,
         game_embeddings=None,
+        verbose=True,
     )
     model = model.to(device)
     if model.game_content_embeddings is not None:

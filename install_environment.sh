@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Creating a conda environment with Python 3.10.8 and IPython..."
-conda create -n project python=3.10.8 ipython
+conda create -n project python=3.10.8 ipython -y
 if [ $? -eq 0 ]; then
   echo "Conda environment creation succeeded."
 else
@@ -9,7 +9,7 @@ else
 fi
 # Change to ~/Anaconda3/etc/profile.d/conda.sh in case you don't use miniconda
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate project
+conda activate project 
 if [ $? -eq 0 ]; then
   echo "Conda environment activated."
 else
@@ -18,7 +18,7 @@ else
 
 fi
 echo "Installing conda-build..."
-conda install conda-build
+conda install conda-build -y
 if [ $? -eq 0 ]; then
   echo "Conda-build installation succeeded."
 else

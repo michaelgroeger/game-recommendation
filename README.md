@@ -41,6 +41,16 @@ conda install conda-build
 conda develop ./scripts
 # Installs dependencies
 pip install -r requirements.txt
+# installs git lfs
+git lfs install
+# pulls large files
+git lfs pull
+```
+
+For the following scripts please make sure the environment 'project' is activated in you terminal. If unsure please run:
+
+```zsh
+conda activate project
 ```
 
 ## Reproduce results
@@ -73,6 +83,14 @@ To start the App locally, run
 ./start_app.sh
 ```
 
+If you see a message like
+
+```zsh
+2023-02-16 11:48:06.772 `st.experimental_singleton` is deprecated...
+```
+
+Don't worry about that. Simply refresh the page or proceed to Recommendations and the message will be gone for this session. 
+
 ## Test Scraping pipeline
 
 To test the scraping scripts, simply run
@@ -88,5 +106,5 @@ You can then inspect the files in:
 ./tests/steam_games_test_data
 ```
 
-They contain outputs from scraping the nvidia game website and the Steam API. Since these endpoints change on a regular basis the test may fail. For this, I provided you data from prior runs to inspect.
+They contain outputs from scraping the nvidia game website and the Steam API. Since these endpoints change on a regular basis or the IP Address got blocked the tests may fail. For this, I provided you data from prior runs to inspect.
 If the test cases succeed and there is new data, the old files should have been overwritten.

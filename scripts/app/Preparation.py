@@ -3,12 +3,6 @@
 #######################################################################################################################################
 import os
 import warnings
-
-warnings.filterwarnings(
-    "ignore",
-    message="`st.experimental_singleton` is deprecated. Please use the new command `st.cache_resource` instead, which has the same behavior. More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).",
-)
-
 import randfacts
 import streamlit as st
 from st_pages import Page, show_pages

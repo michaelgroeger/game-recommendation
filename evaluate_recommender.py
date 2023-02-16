@@ -260,7 +260,7 @@ def main(
             total = value[0] + value[1]
             sum.append(total)
         print(
-            f"Statistics for : {key} \nmean accuracy across all seeds of {statistics.mean(accuracy)} with std of {statistics.stdev(accuracy)} \nmean diversity across all seeds of {statistics.mean(diversity)} with std of {statistics.stdev(diversity)} \nmean total score across all seeds of {statistics.mean(sum)} with std of {statistics.stdev(sum)}"
+            f"Statistics for : {key} \nmean accuracy across all seeds of {statistics.mean(accuracy)} with std of {statistics.stdev(accuracy)} \nmean diversity across all seeds of {statistics.mean(diversity)} with std of {statistics.stdev(diversity)} \nmean total score across all seeds of {statistics.mean(sum)} with std of {statistics.stdev(sum)}\n"
         )
 
 
