@@ -115,6 +115,42 @@ chromedriver installed.
 
 ## Closing Remarks
 
+Structural overview and additional comments if not mentioned above already:
+
+```txt
+.
+├── LICENSE.md
+├── README.md
+├── build_training_dataset.py                       -> For building Training datasets with top n games.
+├── config.yaml -> Configurations for scrapers
+├── data                                            -> Data for training algorithms
+│   ├── raw
+│   └── training_dataset
+├── evaluate_recommender.py
+├── install_environment.sh
+├── queryable_users.txt                             -> Small excerpt of users that can be used in the app. Compare with their games under https://steamcommunity.com/profiles/{id}/
+├── reproduce_benchmark_results.sh
+├── requirements.txt
+├── run_scraping_tests.sh
+├── scripts
+│   ├── app                                         -> Scripts and files to run app 
+│   ├── data_processors                             -> Scripts that process training and scraped data
+│   ├── models                                      -> Model definitions
+│   ├── scrapers                                    -> For scraping Nvidia and Steam
+│   ├── streamlit_helpers                           -> Helper functions for app
+│   └── tools                                       -> Place for generic functions
+├── start_app.sh
+├── tests
+│   ├── __pycache__
+│   ├── nvidia_games_test_data
+│   ├── nvidia_processor_test.py
+│   ├── nvidia_scraper_test.py
+│   ├── steam_games_test_data
+│   ├── steam_processor_test.py
+│   └── steam_scraper_test.py
+├── train_recommender.py
+```
+
 This repository was tested and worked in:
 
 ```zsh
