@@ -6,9 +6,10 @@ import os
 import string
 from datetime import datetime
 
+import numpy as np
 import pandas as pd
 import torch
-import numpy as np
+
 torch.autograd.set_detect_anomaly(True)
 import random
 
@@ -24,33 +25,102 @@ from tools.useful_functions import subset_users_having_at_least_n_games
 from torch.utils.data import DataLoader
 
 parser = argparse.ArgumentParser(description="Evaluate and train algorithms")
-parser.add_argument("-m", "--model", type=str, default="CollabNN", help="Which model architecture to train. You can set CollabNN (Neural Collaborative Filtering) or MF (Matrix Factorization).")
-parser.add_argument("-nw", "--nworkers", type=int, default=1, help="Number of workers in the Data Loader.")
+parser.add_argument(
+    "-m",
+    "--model",
+    type=str,
+    default="CollabNN",
+    help="Which model architecture to train. You can set CollabNN (Neural Collaborative Filtering) or MF (Matrix Factorization).",
+)
+parser.add_argument(
+    "-nw",
+    "--nworkers",
+    type=int,
+    default=1,
+    help="Number of workers in the Data Loader.",
+)
 parser.add_argument("-bs", "--batch_size", type=int, default=128)
-parser.add_argument("-ed", "--embedding_dim", type=int, default=50, help="Embedding dimension of the latent user and game factors to be learnt.")
+parser.add_argument(
+    "-ed",
+    "--embedding_dim",
+    type=int,
+    default=50,
+    help="Embedding dimension of the latent user and game factors to be learnt.",
+)
 parser.add_argument("-d", "--device", type=str, default="cpu")
-parser.add_argument("-ntestu", "--n_test_users", type=int, default=50, help="How many test users to use during training for the cold start benchmark.")
-parser.add_argument("-negs", "--n_negative_samples", type=int, default=4, help="Number of negative samples per positive sample.")
+parser.add_argument(
+    "-ntestu",
+    "--n_test_users",
+    type=int,
+    default=50,
+    help="How many test users to use during training for the cold start benchmark.",
+)
+parser.add_argument(
+    "-negs",
+    "--n_negative_samples",
+    type=int,
+    default=4,
+    help="Number of negative samples per positive sample.",
+)
 parser.add_argument("-e", "--epochs", type=int, default=20)
 parser.add_argument("-lr", "--learning_rate", type=float, default=0.01)
 parser.add_argument("-mom", "--momentum", type=float, default=0.00)
 parser.add_argument("-wd", "--weight_decay", type=float, default=0.00)
-parser.add_argument("-mg", "--min_games", type=int, default=20, help="Minimum number of games a user need to have to be considered.")
-parser.add_argument("-mp", "--min_playtime", type=float, default=2.0, help="All games with a playtime smaller than that are set to zero.")
-parser.add_argument("-ncu", "--num_closest_users", type=int, default=13, help="Number of closest users that will be used to determine the mean user in the cold start setting.")
+parser.add_argument(
+    "-mg",
+    "--min_games",
+    type=int,
+    default=20,
+    help="Minimum number of games a user need to have to be considered.",
+)
+parser.add_argument(
+    "-mp",
+    "--min_playtime",
+    type=float,
+    default=2.0,
+    help="All games with a playtime smaller than that are set to zero.",
+)
+parser.add_argument(
+    "-ncu",
+    "--num_closest_users",
+    type=int,
+    default=13,
+    help="Number of closest users that will be used to determine the mean user in the cold start setting.",
+)
 parser.add_argument("-s", "--seed", type=int, default=41)
-parser.add_argument("-subs", "--subsample_n_users", type=int, default=None, help="Build whole pipeline on only a subset of users")
+parser.add_argument(
+    "-subs",
+    "--subsample_n_users",
+    type=int,
+    default=None,
+    help="Build whole pipeline on only a subset of users",
+)
 parser.add_argument("--embedding_path", type=str, default=None)
 
-parser.add_argument("--checkpoint", action="store_true", help="Whether to save the best model.")
+parser.add_argument(
+    "--checkpoint", action="store_true", help="Whether to save the best model."
+)
 parser.add_argument("--no-checkpoint", dest="checkpoint", action="store_false")
-parser.add_argument("--scheduling", action="store_true", help="Whether to do learning rate scheduling.")
+parser.add_argument(
+    "--scheduling", action="store_true", help="Whether to do learning rate scheduling."
+)
 parser.add_argument("--no-scheduling", dest="scheduling", action="store_false")
 parser.add_argument("--wandb", action="store_true")
-parser.add_argument("--no-wandb", dest="wandb", action="store_false", help="Whether to use weights&biases for experiment tracking")
-parser.add_argument("--logarithm", action="store_true", help="Whether to take the logarithm of the playtime data.")
+parser.add_argument(
+    "--no-wandb",
+    dest="wandb",
+    action="store_false",
+    help="Whether to use weights&biases for experiment tracking",
+)
+parser.add_argument(
+    "--logarithm",
+    action="store_true",
+    help="Whether to take the logarithm of the playtime data.",
+)
 parser.add_argument("--no-logarithm", dest="logarithm", action="store_false")
-parser.add_argument("--binarize", action="store_true", help="Whether to make playtimes binary.")
+parser.add_argument(
+    "--binarize", action="store_true", help="Whether to make playtimes binary."
+)
 parser.add_argument("--no-binarize", dest="binarize", action="store_false")
 parser.add_argument("--feed_content_embeddings", action="store_true")
 parser.add_argument(
@@ -148,7 +218,7 @@ def main(
         validate, validate_negatives, dataset_name="Validation"
     )
     test_dset = UserGameDataseEfficient(test, test_negatives, dataset_name="Test")
-    # build hit rate dataset by asking the model to rank the top game among 1000 others and 
+    # build hit rate dataset by asking the model to rank the top game among 1000 others and
     # measure if it is under the top 10
     hit_rate_dataset = HitRatioDataset(
         test,

@@ -124,20 +124,20 @@ show_collaborative_filtering = st.checkbox("Collaborative Filtering Recommender"
 if show_collaborative_filtering:
     if len(already_have) > 0:
         with st.spinner("Loading Recommendations from Collaborative Filtering:"):
-                # Get recommendations based on naive recommender
-                recommendations = naive_recommender_binary_input(
-                    already_have_ids,
-                    user_game_matrix,
-                    num_recommendations=n,
-                    top_k_users=5,
-                )
-                # Get images of recommmendations
-                images = game_informations.loc[
-                    game_informations["appid"].isin(recommendations)
-                ]["header_image"].tolist()
-                app_ids = game_informations.loc[
-                    game_informations["appid"].isin(recommendations)
-                ]["appid"].tolist()
+            # Get recommendations based on naive recommender
+            recommendations = naive_recommender_binary_input(
+                already_have_ids,
+                user_game_matrix,
+                num_recommendations=n,
+                top_k_users=5,
+            )
+            # Get images of recommmendations
+            images = game_informations.loc[
+                game_informations["appid"].isin(recommendations)
+            ]["header_image"].tolist()
+            app_ids = game_informations.loc[
+                game_informations["appid"].isin(recommendations)
+            ]["appid"].tolist()
         for i in range(n):
             st.markdown(
                 f"[![Recommendation]({images[i].format(i + 1)})](https://store.steampowered.com/app/{app_ids[i]}/)"

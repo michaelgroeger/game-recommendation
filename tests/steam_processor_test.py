@@ -30,11 +30,10 @@ def format_steam_games(
     if recreate_test_cases:
         steam_processor.export_dataframe(
             steam_processor.dataframe,
-            path=
-            os.path.join(
+            path=os.path.join(
                 os.getcwd(),
                 "tests/steam_games_test_data/steam_first_100_normalized.csv",
-            )
+            ),
         )
     old_steam_df = steam_processor.load_dataframe(
         "tests/steam_games_test_data/steam_first_100_normalized.csv"

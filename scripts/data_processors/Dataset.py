@@ -44,7 +44,9 @@ class UserGameDataseEfficient(Dataset):
 
     def add_negatives(self):
         # Report to terminal which dataset is being build
-        print(f"Building new version of dataset {self.dataset_name} by providing new negative samples for next run.")
+        print(
+            f"Building new version of dataset {self.dataset_name} by providing new negative samples for next run."
+        )
         # Get all positives
         app_id_positive = pd.Series(self.user_game_dataset["app_id_mapped"])
         user_id_positive = pd.Series(self.user_game_dataset["user_id"])
@@ -152,7 +154,9 @@ class HitRatioDataset(Dataset):
 
     def add_negatives(self):
         # Takes one positive instance and adds zero_one_ratio negatives to it and exports it to a dataframe
-        print(f"Building new version of dataset {self.dataset_name} by providing new negative samples for next run.")
+        print(
+            f"Building new version of dataset {self.dataset_name} by providing new negative samples for next run."
+        )
         self.sample_unique_positves()
         app_ids = pd.Series(self.hit_ratio_positives["app_id_mapped"])
         user_ids = pd.Series(self.hit_ratio_positives["user_id"])

@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 import torch
 
+
 ## ttl-> After these seconds the file in cache will be renewed with the next interaction
 @st.cache_data(ttl=240, show_spinner=False)
 def load_dataframe(path, parquet=True):

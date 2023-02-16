@@ -47,8 +47,7 @@ def format_nvidia_games(
             path=os.path.join(
                 os.getcwd(),
                 "tests/nvidia_games_test_data/nvidia_first_100_normalized.csv",
-            )
-
+            ),
         )
     # Return old and new data
     return nvidia_processor.dataframe, nvidia_processor.load_dataframe(

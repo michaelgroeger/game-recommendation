@@ -66,7 +66,7 @@ if choice == "Select from list":
     already_have = st.multiselect(
         "Which games do you play?",
         games,
-        help="If you want games from a certain genre consider putting those which you play and are of that genre."
+        help="If you want games from a certain genre consider putting those which you play and are of that genre.",
     )
     if len(already_have) > 0:
         st.write(

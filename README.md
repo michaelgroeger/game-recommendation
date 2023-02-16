@@ -59,7 +59,7 @@ or run directly in your terminal:
 
 ## Train a recommender
 
-If you want to train a recommender you have a rich set of options to do so. Please check the flags in ```train_recommender.py``` or run a sample training by simply executing 
+If you want to train a recommender you have a rich set of options to do so. Please check the flags in ```train_recommender.py``` or run a sample training by simply executing
 
 ```zsh
 ./train_recommender.sh
@@ -88,5 +88,5 @@ You can then inspect the files in:
 ./tests/steam_games_test_data
 ```
 
-They contain some outputs from the scraping of the nvidia game website and the Steam API. Since these endpoints change on a regular basis the test may fail. For this I provided you data from prior runs to inspect. 
-If the test cases succeed and there is new data the old files should have been overwritten. 
+They contain some outputs from the scraping of the nvidia game website and the Steam API. Since these endpoints change on a regular basis the test may fail. For this I provided you data from prior runs to inspect.
+If the test cases succeed and there is new data the old files should have been overwritten.

@@ -1,1 +1,1 @@
-python -m pytest -W ignore::DeprecationWarning 
+python -m pytest -W ignore::DeprecationWarning

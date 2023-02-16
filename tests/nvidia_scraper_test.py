@@ -3,8 +3,9 @@
 ########################################
 import os
 
-from scripts.scrapers.NvidiaScraper import NvidiaScraper
 from tools.useful_functions import load_config
+
+from scripts.scrapers.NvidiaScraper import NvidiaScraper
 
 
 def get_Nvidia_games_old_and_new(
@@ -31,13 +32,13 @@ def get_Nvidia_games_old_and_new(
     nvidia_1.build_chrome_driver()
     # scrape games from website
     nvidia_1.get_games()
-    # If recreate test case, save data 
+    # If recreate test case, save data
     if recreate_test_cases:
         nvidia_1.pickle_data(
             os.path.join(
-                os.getcwd(),
-                "tests/nvidia_games_test_data/first_100_games.pkl"),
-                nvidia_1.scraped_content,
+                os.getcwd(), "tests/nvidia_games_test_data/first_100_games.pkl"
+            ),
+            nvidia_1.scraped_content,
         )
     # return new and old games
     return nvidia_1.scraped_content, nvidia_1.unpickle_data(
