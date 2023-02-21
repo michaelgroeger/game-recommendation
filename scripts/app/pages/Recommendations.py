@@ -91,7 +91,7 @@ if show_content_based:
         # Catch situation where there are fewer recommendations than selected due to the fact that users don't have played enough games
         if len(recommendations) < n:
             n = len(recommendations)
-        #Subset data
+        # Subset data
         relevant_features = game_informations.loc[
             game_informations["appid"].isin(recommendations)
         ].copy()

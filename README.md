@@ -133,7 +133,7 @@ Structural overview and additional comments if not mentioned above already:
 ├── requirements.txt
 ├── run_scraping_tests.sh
 ├── scripts
-│   ├── app                                         -> Scripts and files to run app 
+│   ├── app                                         -> Scripts and files to run app
 │   ├── data_processors                             -> Scripts that process training and scraped data
 │   ├── models                                      -> Model definitions
 │   ├── scrapers                                    -> For scraping Nvidia and Steam
@@ -160,3 +160,18 @@ Ubuntu: Version 22.04
 
 During the tests it seemed that at least 8 GB of RAM should be available for everything to be running smoothly.
 We hope you enjoy this work!
+
+## Citing
+
+If you use the custom code or data from this repo please cite:
+
+```latex
+@misc{Groeger:2023,
+  Author = {Michael Gröger},
+  Title = {Game recommendations using content, collaborative filtering and deep learning based recommenders},
+  Year = {2023},
+  Publisher = {GitHub},
+  Journal = {GitHub repository},
+  Howpublished = {\url{https://github.com/michaelgroeger/game-recommendation}}
+}
+```
