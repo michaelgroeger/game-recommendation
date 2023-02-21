@@ -163,7 +163,7 @@ We hope you enjoy this work!
 
 ## Citing
 
-If you use the custom code or data from this repo please cite:
+If you use the code or data from this repo please cite:
 
 ```latex
 @misc{Groeger:2023,
