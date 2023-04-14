@@ -1,0 +1,13 @@
+NVIDIA:
+    URL: "https://www.nvidia.com/en-us/geforce-now/games/"
+    CLASSNAME: "game-name"
+    SAVED_DATA: "data/nvidia_games.pkl"
+    NORMALIZED: "data/nvidia_normalized.csv"
+
+STEAM:
+    URL: "http://api.steampowered.com/ISteamApps/GetAppList/v0002/"
+    SAVED_DATA: "data/steam_games.json"
+    NORMALIZED: "data/steam_normalized.csv"
+JOINED:
+    SAVED_DATA: "data/steam_joined_data.csv"
+    GAMES_INFORMATIONS: "data/game_informations.csv"

@@ -1,0 +1,1 @@
+python train_recommender.py  -d cpu -nw 1 -bs 512 -ed 10 -ntestu 50 -negs 4 -e 10 -lr 0.001 -mg 20 -mp 5.0 --no-checkpoint --no-scheduling --no-wandb --binarize --no-logarithm --feed_content_embeddings --embedding_path data/training_dataset/game_embeddings_5000_most_played_games_prompts=False.npy -subs 1000
